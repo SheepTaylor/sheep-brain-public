@@ -6,7 +6,7 @@ This document defines the development lifecycle for the agent system, focusing o
 
 | Tier | Branch | Worktree Path | DB Path | Purpose |
 |---|---|---|---|---|
-| **scratch** | `scratch-*` | `~/projects/scratch-*` | `~/data/scratch-*/agent.db` | Isolated feature development. |
+| **scratch** | `scratch/*` | `~/projects/scratch-*` | `~/data/scratch-*/agent.db` | Isolated feature development. |
 | **candidate** | `staging` | `~/projects/agent-system-candidate` | `~/data/candidate/agent.db` | Integration testing against live DB snapshot. |
 | **live** | `master` | `~/projects/agent-system` | `~/data/live/agent.db` | Production environment for scheduled agents. |
 
