@@ -40,7 +40,7 @@ Rule of thumb on this box: a 500-token prompt costs ~20 s, and every 100 words o
 | Raw material for the KB | Sitting on the Drive mount (reorganised 2026-09-12 into `life/`, `system/`, `archive/`; layout in `architecture.md`): `checkbook.db`, 2024–2026 budgets and balance sheets, Health Sync sleep/HR/energy CSVs, both health summaries, CR-V manuals/insurance, homeowner's policy, Codex Vitae, values framework, Life System Architecture |
 | VaultGuard | `knowledge/vaultguard.md` is an empty TODO. No secrets store exists on this machine. |
 | Backups | restic nightly, **same disk as the data**. `mirror-script.sh` exits 1 by design. No off-machine copy of `agent.db`. |
-| Docs vs reality | `tech-stack.md` lists `tmux` and `sqlite3` CLI; **neither is installed**. `architecture.md` says timers aren't live; they are (financial daily, synthesis weekly). |
+| Docs vs reality | Resolved: `tmux` and `sqlite3` installed 2026-09-14; `architecture.md` and `agent-system.md` updated 2026-09-13. |
 
 ---
 
@@ -202,7 +202,7 @@ One evening per domain, in this order: **finance → health → household → ve
 
 Exit criterion: every file named in a domain `_index.md` exists, and the Telegram bot answers one real question per domain within 3,500 tokens.
 
-### Phase 5 — Operations (DONE 2026-09-13 except `tmux`/`sqlite3`, which need sudo)
+### Phase 5 — Operations (DONE 2026-09-13; `tmux` and `sqlite3` installed 2026-09-14)
 
 - `OnFailure=telegram-alert@%n.service` on every agent unit; the alert unit posts the failing unit name to Telegram.
 - `~/scripts/restore-drill.sh` on a quarterly timer (mirror check already runs nightly).
