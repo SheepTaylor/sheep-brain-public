@@ -34,5 +34,5 @@
 - No mocking of the database; tests use a real scratch DB
 
 ## Conventions
-- Secrets referenced by VaultGuard entry name only; never hardcoded
+- Secrets live in mode-600 files under `~/.config/`; never hardcoded
 - `.env` files allowed locally, never committed

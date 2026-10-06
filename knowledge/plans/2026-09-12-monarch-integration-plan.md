@@ -39,8 +39,7 @@ them. If Monarch ever blocks scripted login for good, the system degrades to a
 monthly CSV drop rather than to nothing.
 
 Credentials: Monarch email, password, and TOTP secret go in `~/.config/agent-system.env`
-as `MONARCH_EMAIL`, `MONARCH_PASSWORD`, `MONARCH_MFA_SECRET`, backed by VaultGuard
-entries `monarch_email`, `monarch_password`, `monarch_mfa_secret`. Google-login users
+as `MONARCH_EMAIL`, `MONARCH_PASSWORD`, `MONARCH_MFA_SECRET`. Google-login users
 must first set a password in Monarch (Settings → Security). Enabling TOTP MFA on the
 Monarch account is a prerequisite and also a security improvement.
 
@@ -147,7 +146,7 @@ Original phase text follows.
 
 ### Phase M0 — Prerequisites (you, ~20 min)
 1. In Monarch: set a password if you sign in with Google; enable TOTP MFA and copy the "Two-factor text code" (the TOTP secret).
-2. Create VaultGuard entries `monarch_email`, `monarch_password`, `monarch_mfa_secret`; add the three vars to `~/.config/agent-system.env`.
+2. Add the three vars to `~/.config/agent-system.env`.
 3. Do one manual export (Settings → Data → Download Transactions, and one balance-history CSV) into `~/mnt/gdrive/feeds/monarch/`. This is the bootstrap and the fallback test fixture.
 
 ### Phase M1 — Spike (1 session, scratch worktree `scratch/monarch`)

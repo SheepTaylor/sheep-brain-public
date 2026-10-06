@@ -42,7 +42,7 @@ Both raise `ModelUnavailable` so callers degrade a step instead of failing.
 ## Secrets
 `~/.config/agent-system.env` (mode 600, never committed) holds `ANTHROPIC_API_KEY` (plus `ANTHROPIC_WORKSPACE_ID` if the key is org-scoped), `TELEGRAM_BOT_TOKEN`,
 `TELEGRAM_CHAT_ID`; optional `MONARCH_EXPORT_DIR`, `HEALTH_EXPORT_DIR`. Loaded by systemd `EnvironmentFile=` and by `shared/env.py`
-for interactive runs. VaultGuard entry names: `anthropic_api_key`, `telegram_bot_token`, `telegram_chat_id`.
+for interactive runs.
 
 ## Agent Roles
 | Agent | Trigger | Input | Output |

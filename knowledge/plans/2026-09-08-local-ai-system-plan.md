@@ -38,7 +38,7 @@ Rule of thumb on this box: a 500-token prompt costs ~20 s, and every 100 words o
 | Telegram bot | Does not exist. `skills/telegram-bot.md` is an empty TODO. |
 | Life KB (`life/`) | 10 domain indexes, **3 leaf files** (`crv_2018.md`, `utilities.md`, `estate_pointers.md`). Indexes point at ~35 files that don't exist. |
 | Raw material for the KB | Sitting on the Drive mount (reorganised 2026-09-12 into `life/`, `system/`, `archive/`; layout in `architecture.md`): `checkbook.db`, 2024–2026 budgets and balance sheets, Health Sync sleep/HR/energy CSVs, both health summaries, CR-V manuals/insurance, homeowner's policy, Codex Vitae, values framework, Life System Architecture |
-| VaultGuard | `knowledge/vaultguard.md` is an empty TODO. No secrets store exists on this machine. |
+| Secrets store | None. Secrets live in mode-600 files under `~/.config/`. |
 | Backups | restic nightly, **same disk as the data**. `mirror-script.sh` exits 1 by design. No off-machine copy of `agent.db`. |
 | Docs vs reality | Resolved: `tmux` and `sqlite3` installed 2026-09-14; `architecture.md` and `agent-system.md` updated 2026-09-13. |
 
@@ -138,7 +138,7 @@ Done, using the Google Drive rclone remote you already had (no new account):
 
 **Two things only you can do:**
 
-1. Store the restic password off this machine. Both repos use `~/.config/restic/password`. If the SSD dies, the mirror on Drive is unreadable without it. Put it in VaultGuard / your password manager as `restic_repo_password`.
+1. Store the restic password off this machine. Both repos use `~/.config/restic/password`. If the SSD dies, the mirror on Drive is unreadable without it. Keep a copy somewhere off this machine.
 2. `sudo apt install -y tmux sqlite3` (type `! sudo apt install -y tmux sqlite3` in this session). Needs your password; nothing else in the plan does.
 
 ### Phase 1 — Local model runtime (DONE today)

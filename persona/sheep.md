@@ -16,7 +16,7 @@
 - Keep implementations minimal — resist premature abstraction and over-engineering.
 
 ## Security Stance
-- Secrets live in **VaultGuard**; reference them by entry name only — never hardcode.
+- Secrets live in mode-600 files under `~/.config/` (e.g. `agent-system.env`, `restic/password`); never hardcode or commit them.
 - `.env` files are acceptable locally but must not be committed to git.
 - This is a single-user, home-lab machine; treat it as a trusted environment within those bounds.
 
