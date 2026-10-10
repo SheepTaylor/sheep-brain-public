@@ -16,7 +16,7 @@
 | RAM | 32 GB DDR3, **maxed for this board** | Fits one ~17 GB model plus Claude Code; effective bandwidth ~16 GB/s is the hard ceiling on token speed |
 | GPU | Intel HD 4600 integrated | Useless for inference |
 | Disk | 238 GB SATA SSD, 178 GB free | Room for ~10 models; model load ~0.5 GB/s |
-| Network | ~100–180 Mbit down; Tailscale up (`sheep-dell` 100.67.145.91) | 17 GB model = 15–25 min download |
+| Network | ~100–180 Mbit down; Tailscale up | 17 GB model = 15–25 min download |
 | Power/uptime | Always on, load average 0.00 | The box is idle 99% of the time. That is the resource to exploit. |
 
 ### Measured throughput (llama.cpp b10809, CPU, 4 threads)
@@ -156,7 +156,7 @@ Installed and running, nothing needs sudo:
 
 Verified: `echo <numbers> | llm "what is the trend?"` returns a sensible two-sentence answer in ~10 s on Gemma (it noticed the balance was trending down; the 4B model did not).
 
-To expose it to your laptop over Tailscale later, change `--host 127.0.0.1` to `--host 100.67.145.91` in the unit; the API key already gates access.
+To expose it to your laptop over Tailscale later, change `--host 127.0.0.1` to `--host <tailscale-ip>` in the unit; the API key already gates access.
 
 Optional additions when wanted: `ggml-org/gemma-4-E4B-it-GGUF` (4.6 GB, **audio + image input**, for voice notes), plus its 60 MB MTP drafter file which llama.cpp uses to speed generation.
 
