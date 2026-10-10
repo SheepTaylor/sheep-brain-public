@@ -7,8 +7,8 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 ## Query intake
 | Message | Handling |
 |---|---|
-| plain text, `/ask <q>` | route through the life KB, answer with the local model; escalate to Haiku 4.5 when the local answer ends with `CONFIDENCE: low` or the local model is down |
-| `/ask more <q>` | same context, answered by Sonnet 5 |
+| plain text, `/ask <q>` | route through the life KB, answer with the local model; escalate to Haiku 5.5 when the local answer ends with `CONFIDENCE: low` or the local model is down |
+| `/ask more <q>` | same context, answered by Sonnet 5.5 |
 | `/ask deep <q>` | same context, answered by Opus 5 (the only way Opus is ever used) |
 | `/status` | timers (next run, failed units), disk, age of `backup.log` / `mirror.log`, loaded local model, month spend from `token_usage`, last observation per agent |
 | `/report` | newest `reports` row (the weekly brief) |

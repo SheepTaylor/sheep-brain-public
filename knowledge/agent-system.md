@@ -35,7 +35,7 @@ Cost is a standing constraint: each agent uses the cheapest model that does its 
 | Function | Backend | Use for |
 |---|---|---|
 | `ask_local(prompt, system=None, ...)` | llama-server on 127.0.0.1:8080 (Gemma 4 26B-A4B), free, private | Anything touching raw ledger/health/family data; drafts; classification |
-| `ask_claude(prompt, system, model=CHEAP)` | `claude-haiku-4-5` default; pass `BETTER` (`claude-sonnet-5`) when quality matters; `BEST` (Opus) never by default | Escalations, weekly synthesis |
+| `ask_claude(prompt, system, model=CHEAP)` | `claude-haiku-5-5` default; pass `BETTER` (`claude-sonnet-5-5`) when quality matters; thinking is always switched off (`THINKING_OFF` per model); `BEST` (Opus) never by default | Escalations, weekly synthesis |
 Both raise `ModelUnavailable` so callers degrade a step instead of failing.
 `system` must be the static part (persona, KB indexes) so it prompt-caches; volatile text goes in `prompt`.
 
@@ -51,7 +51,7 @@ for interactive runs.
 | `financial_agent` | daily 00:00 | `fin_*` tables via `shared/ledger.summarize()`; exits 1 with a message if the tables are empty (checkbook fallback retired 2026-09-12) | one `observations` row: local-model sentence + JSON summary (net worth, 7/30-day spend by category and merchant, needs-review count, `days_stale` since the last transaction; over 7 days means a fresh export is due) |
 | `health_sync_agent` | `ExecStartPre` of the health unit | newest `HealthSummary_*.zip` in `feeds/mychart/` on the Drive mount (Epic MyChart → Sharing → Download my record; IHE XDM zip of C-CDA `DOC*.XML`) via `shared/ccda.py` | upserts into `health_facts` (one row per problem, medication, allergy, immunization, lab result, vital, procedure, encounter, device, care-team member, social item, screening topic, clinical note); one `health_sync_log` row; skips the parse if that exact file was already loaded; re-applies `health_overrides` (Sheep's corrections, e.g. `python3 -m shared.health override 'hm|DTaP/Tdap/Td Vaccine (1 - Tdap)' --status completed --note '...'`) after every load |
 | `health_agent` | weekly Sun 00:00 | `health_facts` via `shared/health.summarize()`; exits 1 if empty | one `observations` row (domain `health`): local-model paragraph + JSON summary (active problems/meds, allergies, last vitals, abnormal results 90d, screenings due within 30d, last/upcoming encounters, `days_since_sync`; over 120 days nags for a fresh export) + Telegram note. **Local model only** — the record never leaves the machine |
-| `synthesis_agent` | weekly Mon 00:00 | last 7 days of `observations` | `reports` row + Telegram message; local draft → Sonnet 5 final → Telegram, degrading a step at a time |
+| `synthesis_agent` | weekly Mon 00:00 | last 7 days of `observations` | `reports` row + Telegram message; local draft → Sonnet 5.5 final → Telegram, degrading a step at a time; health/people observations get a local-only section and never reach Claude |
 | `telegram_bot` | always on (`agent-telegram-bot.service`) | messages from `TELEGRAM_CHAT_ID` only | answers from the life KB via `shared/kb.py` (two-tier routing, local model, Haiku on low confidence, `/ask more` Sonnet, `/ask deep` Opus; health/people never leave the box); `/status`, `/report`, `/model`. See `skills/telegram-bot.md` |
 | `notify_agent` | `OnFailure=telegram-alert@%n.service` on every unit; `restore-drill.service` | unit name (+ journal tail) or stdin | Telegram alert |
 
