@@ -53,10 +53,10 @@ the Drive root repeats this table.
 
 | Folder | Purpose | Written by |
 |---|---|---|
-| `feeds/` | The only place agents read. `feeds/monarch/` holds the weekly Monarch export (`Transactions_*.csv`, `Balances_*.csv`, newest pair wins); `feeds/mychart/<person>/` holds each person's Epic MyChart record export (`HealthSummary_*.zip`, newest wins per person, loaded by `health_sync_agent`; a zip in the wrong folder is refused, not merged); `feeds/Health Connect.zip` is the phone's daily Health Connect export (Galaxy Watch via Samsung Health, Withings scale; overwritten in place, loaded by `health_connect_agent`). The old `Health Sync <type>` folders at the Drive root stopped in March 2026 and are superseded. | Sheep, the phone's Health Connect export |
+| `feeds/` | The only place agents read. `feeds/monarch/` holds the weekly Monarch export (`Transactions_*.csv`, `Balances_*.csv`, newest pair wins); `feeds/mychart/<person>/` holds each person's Epic MyChart record export (`HealthSummary_*.zip`, newest wins per person, loaded by `health_sync_agent`; a zip in the wrong folder is refused, not merged); `feeds/Health Connect.zip` is the phone's daily Health Connect export (Galaxy Watch via Samsung Health, Withings scale; overwritten in place, loaded by `health_connect_agent`). The old Health Sync CSVs (Feb–Mar 2026) are in `archive/health-sync/`. | Sheep, the phone's Health Connect export |
 | `life/<domain>/` | Source documents for the KB; subfolders mirror `~/agent-shared/life/` (finance, health/<person>, household, vehicles, people, interests/…). Human-curated. | Sheep |
 | `system/` | Plans, frameworks (Codex Vitae, values, Life System Architecture), skills for the agent system itself. | Sheep |
-| `archive/` | Inert: old Checkbook workflow notes (`archive/checkbook/`; the databases were trashed 2026-09-12), 2025 transaction downloads, Amazon orders, untitled leftovers. | nobody |
+| `archive/` | Inert: old Health Sync CSVs (`archive/health-sync/`), old Checkbook workflow notes (`archive/checkbook/`; the databases were trashed 2026-09-12), 2025 transaction downloads, Amazon orders, untitled leftovers. | nobody |
 | `backups/` | restic mirror (see `life/digital/backups.md`). | restic |
 
 Move files with `rclone moveto` from the server rather than the Drive web UI: moves are server-side
