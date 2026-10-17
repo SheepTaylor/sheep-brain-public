@@ -132,7 +132,7 @@ advice, not a block: the screen still offers "Log it anyway".
    - The budget lines list, where tapping a line shows its top merchants.
 3. **Pending.** Logged purchases not yet matched to the ledger, showing who logged each one
    and with swipe-to-undo.
-4. **Settings.** Pairing scans a QR code (shown by `python3 -m agents.finance_api pair moose`)
+4. **Settings.** Pairing scans a QR code (`python3 -m agents.finance_api qr moose`, run from ~/projects/agent-system)
    that holds the server URL and the token.
 
 Also: a **home-screen widget** ("Non-essential room: $X · as of Oct 12"; tapping it opens
