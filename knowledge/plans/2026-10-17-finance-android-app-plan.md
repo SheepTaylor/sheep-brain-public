@@ -44,7 +44,7 @@ Android app (Kotlin, Compose)            home server
   `OnFailure=telegram-alert@%N.service`, and listens on Tailscale IP port 8090 (8081 is
   already taken).
 - Auth: one random token per device in `~/.config/agent-system.env`
-  (`FINANCE_API_TOKENS=sheep:…,wife:…`), sent as `Authorization: Bearer`. The device name is
+  (`FINANCE_API_TOKENS=sheep:…,moose:…`), sent as `Authorization: Bearer`. The device name is
   recorded on logged purchases. Tailscale ACLs are the outer wall, and the token makes revoking
   one phone easy.
 - Migration `009_fin_pending.sql`:
@@ -76,7 +76,7 @@ HTTPS certificate, which needs HTTPS enabled for the tailnet in the admin consol
            "essential": {"actual": 0, "target": null},
            "non_essential": {"actual": 0, "target": 0, "unrecorded_est": 0, "pending": 0},
            "lines": [{"name": "Dining (incl. delivery)", "actual": 0, "target": 0, "pace": 0}]},
- "pending": [{"id": 1, "who": "wife", "amount": 0, "note": "shoes"}]}
+ "pending": [{"id": 1, "who": "moose", "amount": 0, "note": "shoes"}]}
 ```
 
 ### Verdict logic (`shared/afford.py`, pure function, pytest-covered)
@@ -132,7 +132,7 @@ advice, not a block: the screen still offers "Log it anyway".
    - The budget lines list, where tapping a line shows its top merchants.
 3. **Pending.** Logged purchases not yet matched to the ledger, showing who logged each one
    and with swipe-to-undo.
-4. **Settings.** Pairing scans a QR code (shown by `python3 -m agents.finance_api pair wife`)
+4. **Settings.** Pairing scans a QR code (shown by `python3 -m agents.finance_api pair moose`)
    that holds the server URL and the token.
 
 Also: a **home-screen widget** ("Non-essential room: $X · as of Oct 12"; tapping it opens
