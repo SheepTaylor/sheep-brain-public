@@ -52,6 +52,11 @@ Android app (Kotlin, Compose)            home server
   On each Monarch import, a pending row is matched to a real transaction (same amount within
   ±$1, within 10 days) and drops out, or it expires after 21 days.
 
+Phase 2 note: the API is plain HTTP inside the tailnet (WireGuard already encrypts it), and
+Android blocks cleartext by default. The app needs a `network_security_config` that allows
+cleartext only to the server's Tailscale IP. The alternative is `tailscale serve` with an
+HTTPS certificate, which needs HTTPS enabled for the tailnet in the admin console.
+
 ### Endpoints
 
 | Method | Path | Returns |
@@ -142,7 +147,7 @@ balance and net worth; there are no per-device restrictions.
 | # | Deliverable | Where |
 |---|---|---|
 | 0 | `/afford 120 shoes` Telegram command using `shared/afford.py` (built 2026-10-17; budget.py gained the detail lines) | `scratch/finance-api` |
-| 1 | `finance_api.py`, migration 009, pending matching in `monarch_sync_agent`, pytest | same branch → staging → master |
+| 1 | `finance_api.py`, `shared/dashboard.py`, `shared/pending.py`, migration 009, pending matching in `monarch_sync_agent`, pytest (built 2026-10-17, 6081769, on staging) | same branch → staging → master |
 | 2 | Android read-only dashboard + pairing | `finance-android` |
 | 3 | Afford screen + log purchase | |
 | 4 | Widget, QS tile, offline cache | |
