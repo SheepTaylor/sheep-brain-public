@@ -149,7 +149,7 @@ balance and net worth; there are no per-device restrictions.
 | 0 | `/afford 120 shoes` Telegram command using `shared/afford.py` (built 2026-10-17; budget.py gained the detail lines) | `scratch/finance-api` |
 | 1 | `finance_api.py`, `shared/dashboard.py`, `shared/pending.py`, migration 009, pending matching in `monarch_sync_agent`, pytest (built 2026-10-17, 6081769, on staging) | same branch → staging → master |
 | 2 | Android read-only dashboard + pairing (built 2026-10-17, finance-android 3e44360; server 5be3e5e on staging) | `finance-android` |
-| 3 | Afford screen + log purchase | |
+| 3 | Afford screen + log purchase + undo (built 2026-10-17, app 874531e v0.3.0; server a6e5a14 adds explicit line + GET /v1/lines, on staging) | |
 | 4 | Widget, QS tile, offline cache | |
 
 ## Decisions (Sheep, 2026-10-17)
