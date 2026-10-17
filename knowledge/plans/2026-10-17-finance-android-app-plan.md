@@ -76,25 +76,23 @@ Android app (Kotlin, Compose)            home server
 
 ### Verdict logic (`shared/afford.py`, pure function, pytest-covered)
 
-Inputs are the amount, the bucket (essential or non-essential), and an optional line (Shopping,
-Dining, Gifts, …). Three checks run, and the worst result wins.
+Inputs are the amount and a note ("shoes"); keywords in the note pick the budget line
+(default Other shopping), and the line picks the bucket. Both the line (when it has a target)
+and the bucket are checked, and the worst result wins.
 
 1. **Monthly room.** Room = target − (actual + pending + estimated unrecorded). The estimated
-   unrecorded spending is the trailing 90-day daily average for the bucket × days since the
-   export. The room checked is the bucket's (non-essential for shoes), plus the line's room when
-   the line has a target.
-2. **Pace.** The share of the target used is compared with the share of the month elapsed.
-   Being under target with 3 days left is different from being under target on day 3.
-3. **Cash safety.** Card purchases count against the month's budget only, never against today's
-   checking balance. For the cash check, the amount is added to the `bills.project()` timeline at the next autopay
-   date for the card (or today for debit), and the projected low is compared with the checking
-   floor from `bills.md`.
+   unrecorded spending is the trailing 90-day daily average × the days since the newest
+   ledger transaction.
+2. **Pace (non-essential only).** A purchase is ahead of pace when the bucket's spending after
+   it exceeds target × (share of the month elapsed + 10%). Essential bills are too lumpy for this.
+3. **No cash check in the verdict.** Card purchases count against the month's budget only
+   (Sheep, 2026-10-17). The dashboard shows the checking projection separately.
 
 | Verdict | Rule | Example headline |
 |---|---|---|
-| **Fits** (green) | room after purchase ≥ 0, pace OK, cash low stays above the floor | "Yes — leaves $X of non-essential room for the next 14 days" |
-| **Tight** (amber) | room ≥ 0, but it uses >50% of what's left or puts spending ahead of pace | "Fits, but uses 60% of what's left this month" |
-| **Over** (red) | room < 0, or the cash low falls under the floor | "Would put non-essential $X over for October" |
+| **Fits** (green) | room after purchase ≥ 0 and pace OK | "Fits: $X left for 15 days" |
+| **Tight** (amber) | fits, but uses >50% of the remaining room or runs ahead of pace | "Tight: $84 left for 15 days" |
+| **Over** (red) | the line or the bucket goes below 0 | "Over: $309 over for October" |
 
 Every verdict lists its reasons, including "Data as of Oct 12; ~$Y estimated since." Over is
 advice, not a block: the screen still offers "Log it anyway".
@@ -143,7 +141,7 @@ balance and net worth; there are no per-device restrictions.
 
 | # | Deliverable | Where |
 |---|---|---|
-| 0 | `/afford 120 shoes` Telegram command using `shared/afford.py`, which makes the logic usable within days | `scratch/finance-api` |
+| 0 | `/afford 120 shoes` Telegram command using `shared/afford.py` (built 2026-10-17; budget.py gained the detail lines) | `scratch/finance-api` |
 | 1 | `finance_api.py`, migration 009, pending matching in `monarch_sync_agent`, pytest | same branch → staging → master |
 | 2 | Android read-only dashboard + pairing | `finance-android` |
 | 3 | Afford screen + log purchase | |
