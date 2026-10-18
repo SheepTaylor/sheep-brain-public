@@ -29,19 +29,37 @@ Every model call made through `shared/llm.py` writes one row:
 `token_usage(agent_name, model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd)`.
 `shared.llm.month_cost_usd()` sums the current month.
 
-## Model Routing (`shared/llm.py`)
-Cost is a standing constraint: each agent uses the cheapest model that does its job.
+## Model Routing (`shared/llm.py`, `agent/tasks.toml`)
+Each task uses the best model for the job within the monthly API cap; health and people data stay local.
+Which model a task uses is set in `agent/tasks.toml` (aliases `local`, `haiku`, `sonnet`, `opus`) and read with
+`shared.tasks.model_for(task)`; change models there, not in code. Unknown task names raise `KeyError`.
 
 | Function | Backend | Use for |
 |---|---|---|
 | `ask_local(prompt, system=None, ...)` | llama-server on 127.0.0.1:8080 (Gemma 4 26B-A4B), free, private | Anything touching raw ledger/health/family data; drafts; classification |
-| `ask_claude(prompt, system, model=CHEAP)` | `claude-haiku-5-5` default; pass `BETTER` (`claude-sonnet-5-5`) when quality matters; thinking is always switched off (`THINKING_OFF` per model); `BEST` (Opus) never by default | Escalations, weekly synthesis |
+| `ask_claude(prompt, system, model=CHEAP)` | `CHEAP` `claude-haiku-5-5`, `BETTER` `claude-sonnet-5-5`, `BEST` `claude-opus-5-5`; thinking switched off per model (`THINKING_OFF`), except Opus 5.5, which can't disable it and runs at effort `low` instead | Escalations, weekly synthesis, `/ask` tiers |
+| `ask_web(prompt, system, model=CHEAP)` | same models + server-side web search | Event checks |
 Both raise `ModelUnavailable` so callers degrade a step instead of failing.
 `system` must be the static part (persona, KB indexes) so it prompt-caches; volatile text goes in `prompt`.
 
+**Budget governor.** `AGENT_MONTHLY_CAP_USD` in `~/.config/agent-system.env` caps cloud spend per calendar month
+(unset = no governor). Telegram alerts once at 80% and once at 100% (flags in `agent_state`); at or over the cap
+every cloud call drops one tier (Opus → Sonnet → Haiku → `ModelUnavailable`, so callers fall back to local).
+
+## Agent core foundations (migration 010, Phase 0 of `plans/2026-10-18-agent-core-plan.md`)
+- `agent_runs`: one row per unit of agent work via `with shared.runs.run(agent, trigger, input=...) as r: r.output = ...`
+  (status `ok`/`error`). Model calls inside the block set `token_usage.run_id`; `runs.cost_usd(id)` sums them. The
+  Telegram bot records one run per incoming message.
+- `agent_messages`: every Telegram message delivered by `shared.telegram.send(text, agent=..., critical=...)`, with
+  the Telegram message id, sender and run. `critical` marks alerts that will bypass the daily message budget
+  (unit failures, bank alerts, projected low balance, cap reached).
+- `agent_feedback`: Sheep's reactions (latest state per message; 👍-type = +1, 👎-type = −1) and replies to agent
+  messages, captured by the bot (`allowed_updates` includes `message_reaction`). `/status` shows the 7-day tally.
+- `agent_state`: small persistent flags (budget alerts so far).
+
 ## Secrets
 `~/.config/agent-system.env` (mode 600, never committed) holds `ANTHROPIC_API_KEY` (plus `ANTHROPIC_WORKSPACE_ID` if the key is org-scoped), `TELEGRAM_BOT_TOKEN`,
-`TELEGRAM_CHAT_ID`; optional `MONARCH_EXPORT_DIR`, `HEALTH_EXPORT_DIR`, `GMAIL_ADDRESS` + `GMAIL_APP_PASSWORD` (a Google app password; read-only IMAP for the bills agent). Loaded by systemd `EnvironmentFile=` and by `shared/env.py`
+`TELEGRAM_CHAT_ID`; optional `AGENT_MONTHLY_CAP_USD` (budget governor), `MONARCH_EXPORT_DIR`, `HEALTH_EXPORT_DIR`, `GMAIL_ADDRESS` + `GMAIL_APP_PASSWORD` (a Google app password; read-only IMAP for the bills agent). Loaded by systemd `EnvironmentFile=` and by `shared/env.py`
 for interactive runs.
 
 ## Agent Roles
@@ -55,7 +73,7 @@ for interactive runs.
 | `health_agent` | weekly Sun 00:00 | `health_facts` via `shared/health.summarize()`; exits 1 if empty | one `observations` row (domain `health`): local-model paragraph + JSON summary (active problems/meds, allergies, last vitals, abnormal results 90d, screenings due within 30d, last/upcoming encounters, `days_since_sync`, watch trends (7-day vs prior 28-day averages, last weigh-in; nags after 3 days without watch data); over 120 days nags for a fresh export) + Telegram note. **Local model only** — the record never leaves the machine |
 | `synthesis_agent` | weekly Mon 00:00 | last 7 days of `observations` | `reports` row + Telegram message; local draft → Sonnet 5.5 final → Telegram, degrading a step at a time; health/people observations get a local-only section and never reach Claude |
 | `event_check_agent` | daily 08:15 (`agent-event-check.timer`) | `event_checks` rows (migration 008) whose `due_date` has arrived; added with `/check YYYY-MM-DD topic \| question [\| baseline]` in Telegram (`/check cheap ...` for Haiku, `/check` lists, `/check cancel <id>`) or `python3 -m shared.event_checks add|list|cancel` | Sonnet 5.5 by default (Haiku 5.5 with `cheap`; accuracy on live figures is worth the ~$0.10) + server-side web search (`shared.llm.ask_web`, basic `web_search_20250305`: Haiku 5.5 rejects the 20260209 variant; Haiku ~$0.02 per check, searches billed at $0.01 each) → one Telegram message per check + one `observations` row (domain `world`). A `STATUS: not yet` answer is retried daily, up to 3 days, and the last attempt is sent anyway; model errors mark the check `failed` after 3 tries |
-| `telegram_bot` | always on (`agent-telegram-bot.service`) | messages from `TELEGRAM_CHAT_ID` only | answers from the life KB via `shared/kb.py` (two-tier routing, local model, Haiku on low confidence, `/ask more` Sonnet, `/ask deep` Opus; health/people never leave the box); `/status`, `/report`, `/bills` (3-week cash-flow outlook), `/model`. See `skills/telegram-bot.md` |
+| `telegram_bot` | always on (`agent-telegram-bot.service`) | messages from `TELEGRAM_CHAT_ID` only | answers from the life KB via `shared/kb.py` (two-tier routing, local model, Haiku on low confidence, `/ask more` Sonnet, `/ask deep` Opus 5.5; health/people never leave the box); `/status`, `/report`, `/bills` (3-week cash-flow outlook), `/model`. See `skills/telegram-bot.md` |
 | `notify_agent` | `OnFailure=telegram-alert@%n.service` on every unit; `restore-drill.service` | unit name (+ journal tail) or stdin | Telegram alert |
 
 ## Systemd Timers

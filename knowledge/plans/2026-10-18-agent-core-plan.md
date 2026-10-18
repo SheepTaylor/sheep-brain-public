@@ -50,7 +50,7 @@ Initial tools (read-only plus messaging):
 
 ## Model routing: best model per task, within the cap
 
-A task registry (`agent/tasks.yaml`) names each task's model, chosen by eval score per dollar,
+A task registry (`agent/tasks.toml`) names each task's model, chosen by eval score per dollar,
 not by a fixed ladder. Starting assignments:
 
 | Task | Model | Why |
@@ -117,7 +117,7 @@ diagnoses or record text; the scrub gate rejects anything else.
 
 ## Autonomy tiers (decided 2026-10-18)
 
-`agent/autonomy.yaml` lists each actuator as `off | propose | act`. Sheep's rule: **spending money
+`agent/autonomy.toml` lists each actuator as `off | propose | act`. Sheep's rule: **spending money
 and deleting files always need approval**; everything else may act, logged and reversible.
 
 | Actuator | Tier | Notes |
@@ -185,7 +185,7 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
 ## Phases (each runs in shadow before it replaces anything)
 
 0. **Foundations.** `agent_runs`, `agent_feedback` (Telegram reactions), budget governor,
-   `tasks.yaml`. No behaviour change.
+   `tasks.toml`. No behaviour change. Built 2026-10-18 (migration 010).
 1. **Agent core, read-only.** `shared/agent.py`, the tools above, `health_signals` from the local
    lane. Shadow the Monday review alongside the current synthesis for 3 weeks.
 2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader.
