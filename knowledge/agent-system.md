@@ -57,6 +57,20 @@ every cloud call drops one tier (Opus → Sonnet → Haiku → `ModelUnavailable
   messages, captured by the bot (`allowed_updates` includes `message_reaction`). `/status` shows the 7-day tally.
 - `agent_state`: small persistent flags (budget alerts so far).
 
+## Self-correction (Phase 2)
+- `shared/verify.py` claims check: every amount, percentage and date in a draft must appear in the run's evidence
+  (system context, task prompt, tool results, web citations; rounding to the unit or cent shown, ±5% for "about",
+  "~" or "k" figures) or be a sum/difference/ratio of supported figures the draft cites. Counts under 10 and
+  years are not checked. Our own revision requests are never evidence.
+- `shared/critic.py`: second opinion (task `critic`, Opus 5.5) on the draft against the evidence; flags unsupported
+  facts, names, causes, actions and health statements beyond the signals; JSON issues.
+- `shared/agent.run_agent(..., checks=True, critic=..., extract=...)` returns `AgentResult(text, run_id,
+  unverified, critic, doubts)`; problems from both checks go back to the agent for up to `MAX_REVISIONS` (2)
+  rounds, each re-checked.
+- `agent_predictions` (migration 011): forecasts the agent records (`balance` of an account on a date,
+  `budget_line` month total). `python3 -m shared.predictions` (ExecStartPost of `agent-financial.service`)
+  grades open ones once Monarch covers the date: `actual`, `error`, `abs_pct`; status open/graded/ungradable/void.
+
 ## Secrets
 `~/.config/agent-system.env` (mode 600, never committed) holds `ANTHROPIC_API_KEY` (plus `ANTHROPIC_WORKSPACE_ID` if the key is org-scoped), `TELEGRAM_BOT_TOKEN`,
 `TELEGRAM_CHAT_ID`; optional `AGENT_MONTHLY_CAP_USD` (budget governor), `MONARCH_EXPORT_DIR`, `HEALTH_EXPORT_DIR`, `GMAIL_ADDRESS` + `GMAIL_APP_PASSWORD` (a Google app password; read-only IMAP for the bills agent). Loaded by systemd `EnvironmentFile=` and by `shared/env.py`
@@ -74,7 +88,7 @@ for interactive runs.
 | `synthesis_agent` | weekly Mon 00:00 | last 7 days of `observations` | `reports` row + Telegram message; local draft → Sonnet 5.5 final → Telegram, degrading a step at a time; health/people observations get a local-only section and never reach Claude |
 | `event_check_agent` | daily 08:15 (`agent-event-check.timer`) | `event_checks` rows (migration 008) whose `due_date` has arrived; added with `/check YYYY-MM-DD topic \| question [\| baseline]` in Telegram (`/check cheap ...` for Haiku, `/check` lists, `/check cancel <id>`) or `python3 -m shared.event_checks add|list|cancel` | Sonnet 5.5 by default (Haiku 5.5 with `cheap`; accuracy on live figures is worth the ~$0.10) + server-side web search (`shared.llm.ask_web`, basic `web_search_20250305`: Haiku 5.5 rejects the 20260209 variant; Haiku ~$0.02 per check, searches billed at $0.01 each) → one Telegram message per check + one `observations` row (domain `world`). A `STATUS: not yet` answer is retried daily, up to 3 days, and the last attempt is sent anyway; model errors mark the check `failed` after 3 tries |
 | `telegram_bot` | always on (`agent-telegram-bot.service`) | messages from `TELEGRAM_CHAT_ID` only | answers from the life KB via `shared/kb.py` (two-tier routing, local model, Haiku on low confidence, `/ask more` Sonnet, `/ask deep` Opus 5.5; health/people never leave the box); `/status`, `/report`, `/bills` (3-week cash-flow outlook), `/model`. See `skills/telegram-bot.md` |
-| `review_agent` | weekly Mon 07:45 (`agent-review.timer`), shadow trial from 2026-10-19 alongside `synthesis_agent` | the agent core (`shared/agent.py` tool loop, model `weekly_review` in `agent/tasks.toml`, Sonnet 5.5) with read-only tools from `shared/agent_tools.py`: `query_db` (read-only connection, one SELECT, health tables denied), `db_schema`, `read_kb` (health/ and people/ refused), `cashflow`, `budget_status`, `afford_check`, `data_freshness`, `health_signals` (whitelisted trends/counts computed locally, no record text), server web search; system context = persona + `life/goals/` + life index | one Telegram message ("🧪 Agent core review, shadow trial week N": what moved vs goals, drift, next actions, ≤ 2 questions; the review is taken from `<review>` tags, markdown stripped) + `reports` row `shadow_review:YYYY-MM-DD`; never an observation. Run trace in `agent_runs` (tools called, turns, cost); caps 15 turns / $0.75 per run. `--dry-run` prints without sending |
+| `review_agent` | weekly Mon 07:45 (`agent-review.timer`), shadow trial from 2026-10-19 alongside `synthesis_agent` | the agent core (`shared/agent.py` tool loop, model `weekly_review` in `agent/tasks.toml`, Sonnet 5.5) with read-only tools from `shared/agent_tools.py`: `query_db` (read-only connection, one SELECT, health tables denied), `db_schema`, `read_kb` (health/ and people/ refused), `cashflow`, `budget_status`, `afford_check`, `data_freshness`, `alerts` (bank/bill alerts already sent, with Sheep's dismissals), `health_signals` (whitelisted trends/counts computed locally, no record text), `record_prediction` (its only write: `agent_predictions`), server web search; system context = persona + `life/goals/` + life index | one Telegram message ("🧪 Agent core review, shadow trial week N": what moved vs goals, drift, next actions, ≤ 2 questions; the review is taken from `<review>` tags, markdown stripped) + `reports` row `shadow_review:YYYY-MM-DD`; never an observation. Self-correction: claims check + Opus critic, up to 2 checked revision rounds; the footer flags figures not found in the data and the reviewer's remaining doubts. Run trace in `agent_runs` (tools, turns, cost, `checks` per round); caps 15 turns / $0.75 per loop; ~$0.35 per review. `--dry-run` prints without sending and voids its forecasts |
 | `notify_agent` | `OnFailure=telegram-alert@%n.service` on every unit; `restore-drill.service` | unit name (+ journal tail) or stdin | Telegram alert |
 
 ## Systemd Timers

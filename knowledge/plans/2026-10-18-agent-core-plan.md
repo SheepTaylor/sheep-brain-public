@@ -190,7 +190,9 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
    `send_telegram`/`schedule_followup`/`remember` tools yet (the review runner sends; memory and
    follow-ups move to Phase 3); `health_signals` is computed in code, not by Gemma. Shadow weeks:
    Oct 19, Oct 26, Nov 2.
-2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader.
+2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader. Built 2026-10-18:
+   up to 2 checked revision rounds (one round let the revision introduce new errors); `alerts` tool
+   added after a run re-raised a charge Sheep had dismissed; dry runs void their forecasts.
 3. **Learning loop.** Playbook, lessons, memory, weekly Opus reflection, eval suite seeded from
    history.
 4. **Consolidate.** Daily Haiku heartbeat replaces the financial/budget nags; Telegram becomes
