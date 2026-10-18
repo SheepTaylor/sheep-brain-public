@@ -163,17 +163,16 @@ Review loops follow the Life System Architecture's time scales:
 | Daily | heartbeat + morning digest | Haiku triage, Sonnet when there's something to say | digest; critical alerts any time |
 | Weekly | review conversation ("council": doctor, best friend, future 85-year-old self) | Sonnet; health section local | what moved, where drifting, smallest next action per domain, ≤ 2 questions (one may be a Codex Vitae question) |
 | Weekly | reflection on the agent itself | Opus | playbook/lesson proposals, eval additions |
-| Monthly | goal review + "earns its keep" audit | Opus | progress per goal; subsystems unused for 90 days proposed for retirement |
-| Quarterly | recalibration | Opus | goal/target changes proposed; Codex Vitae revisit; Sheep's time spent on the system |
+| Monthly | goal review | Opus | progress per goal |
+| Quarterly | recalibration | Opus | goal/target changes proposed; Codex Vitae revisit; family archive check-in |
 | Annual | values refinement, estate documents check | Opus | proposals only |
 
-### Guardrails from the brief
+### Guardrails
 
-The "Living Well With AI" brief warns that a personal system can become maintenance that replaces
-living. The design builds that in: messages must end in an action or not be sent; reflective work
-(judgment, learning) gets questions, not answers; the monthly audit retires what isn't used and
-prefers an off-the-shelf tool where one does the job; Sheep's weekly hours on the system are a
-tracked goal; health stays custom because of privacy.
+Messages must end in an action or not be sent; reflective work (judgment, learning) gets
+questions, not answers; health stays custom because of privacy. (The brief's "presence over
+system" and "earn its keep" principles, and the time-tracking goals, were dropped by Sheep on
+2026-10-18.)
 
 ## What retires
 
