@@ -187,7 +187,10 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
 0. **Foundations.** `agent_runs`, `agent_feedback` (Telegram reactions), budget governor,
    `tasks.toml`. No behaviour change. Built 2026-10-18 (migration 010).
 1. **Agent core, read-only.** `shared/agent.py`, the tools above, `health_signals` from the local
-   lane. Shadow the Monday review alongside the current synthesis for 3 weeks.
+   lane. Shadow the Monday review alongside the current synthesis for 3 weeks. Built 2026-10-18: no
+   `send_telegram`/`schedule_followup`/`remember` tools yet (the review runner sends; memory and
+   follow-ups move to Phase 3); `health_signals` is computed in code, not by Gemma. Shadow weeks:
+   Oct 19, Oct 26, Nov 2.
 2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader.
 3. **Learning loop.** Playbook, lessons, memory, weekly Opus reflection, eval suite seeded from
    history.
