@@ -1,6 +1,6 @@
 # Agent Core — self-correcting, self-learning redesign
 
-Status: direction approved 2026-10-18; open decisions at the end; not built. No dollar figures or
+Status: direction and decisions approved 2026-10-18 (see Decisions); not built. No dollar figures or
 personal details here: `knowledge/` is published. The monthly API cap lives in
 `~/.config/agent-system.env` as `AGENT_MONTHLY_CAP_USD`.
 
@@ -115,20 +115,65 @@ loop); when a local model can, the lane gets the same loop with health tools. `h
 a whitelisted schema (metric, direction, magnitude, window, due-count, staleness) with no names,
 diagnoses or record text; the scrub gate rejects anything else.
 
-## Autonomy tiers
+## Autonomy tiers (decided 2026-10-18)
 
-`agent/autonomy.yaml` lists each actuator as `off | propose | act`. Everything starts at
-`propose` (Telegram ask, 👍 to execute) except `send_telegram`, `schedule_followup` and
-`remember`. Promotion is Sheep's call, informed by the approval rate the reflection run reports.
-Moving money is never an actuator.
+`agent/autonomy.yaml` lists each actuator as `off | propose | act`. Sheep's rule: **spending money
+and deleting files always need approval**; everything else may act, logged and reversible.
+
+| Actuator | Tier | Notes |
+|---|---|---|
+| `send_telegram`, `schedule_followup`, `remember` | act | within the message budget below |
+| Calendar: create/update reminders and events | act | agent-created events tagged so they can be found and undone |
+| Gmail: draft replies, label/file mail | act | sending stays `propose` until a track record exists (outward-facing) |
+| KB edits (`life/`, Codex Vitae, goals) | act via git commit, reported in the next digest | one-line revert; deletions of files or sections → `propose` |
+| Playbook/lessons edits from reflection | propose → act for low-risk classes after a track record | auto-rollback on falling feedback |
+| Anything that spends money (orders, bookings with charges, subscriptions) | propose, always | |
+| File or record deletion (Drive, KB, DB rows, email trash) | propose, always | |
+| Moving money between accounts | off | never an actuator |
+
+## Message budget (decided 2026-10-18)
+
+Two to four proactive Telegram messages a day; critical messages are never held back.
+
+- **Slots:** morning digest (~07:30) carries everything non-urgent from the last 24 h; optional
+  evening note only if something new is worth it. That leaves 1–2 for timely items. Replies to
+  Sheep's own messages and approval prompts he asked for don't count.
+- **Queue, don't drop:** a non-critical item that would exceed the budget waits for the next
+  digest. The heartbeat ranks the queue by goal relevance.
+- **Critical (bypass the budget):** projected checking below the floor or a missed/failed bill
+  payment; a security or backup failure; a health signal the local lane marks urgent; a hard
+  deadline within 48 h (renewal, filing, appointment); an approval that blocks something time-bound.
+  Unit failures are batched into the digest unless the unit is one of the sensors behind a
+  critical check.
+- **Learns:** a 👎 on a critical message tightens that class; the reflection run reports the
+  daily count and how many criticals were warranted.
 
 ## Goals become first-class
 
-`life/goals/` (human-curated): Codex Vitae and values moved in from Drive `system/`, plus the
-active goals, each with a measurable signal bound to existing data (budget lines, checking floor,
-debt payoff date, sleep/steps, people contact cadence). The weekly review and monthly goal review
-report progress against these, not raw summaries, and end with one suggestion and at most two
-questions; answers are written to memory or proposed as goal edits.
+`life/goals/` (human-curated; draft written 2026-10-18 from Drive `system/frameworks` and the
+"Living Well With AI" brief): `values.md` (priorities plus the tests every recommendation must
+pass), `goals.md` (active goals by life subsystem, each with signal, source, target and cadence),
+`codex-vitae.md` (the cognitive framework template, unfilled). Health goals are evaluated in the
+local lane; only `health_signals` reach Claude.
+
+Review loops follow the Life System Architecture's time scales:
+
+| Loop | Run | Model | Output |
+|---|---|---|---|
+| Daily | heartbeat + morning digest | Haiku triage, Sonnet when there's something to say | digest; critical alerts any time |
+| Weekly | review conversation ("council": doctor, best friend, future 85-year-old self) | Sonnet; health section local | what moved, where drifting, smallest next action per domain, ≤ 2 questions (one may be a Codex Vitae question) |
+| Weekly | reflection on the agent itself | Opus | playbook/lesson proposals, eval additions |
+| Monthly | goal review + "earns its keep" audit | Opus | progress per goal; subsystems unused for 90 days proposed for retirement |
+| Quarterly | recalibration | Opus | goal/target changes proposed; Codex Vitae revisit; Sheep's time spent on the system |
+| Annual | values refinement, estate documents check | Opus | proposals only |
+
+### Guardrails from the brief
+
+The "Living Well With AI" brief warns that a personal system can become maintenance that replaces
+living. The design builds that in: messages must end in an action or not be sent; reflective work
+(judgment, learning) gets questions, not answers; the monthly audit retires what isn't used and
+prefers an off-the-shelf tool where one does the job; Sheep's weekly hours on the system are a
+tracked goal; health stays custom because of privacy.
 
 ## What retires
 
@@ -148,12 +193,13 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
    history.
 4. **Consolidate.** Daily Haiku heartbeat replaces the financial/budget nags; Telegram becomes
    the agent; retire the paragraph agents one at a time.
-5. **Act.** KB edit proposals (git commit on 👍), calendar and Gmail-draft actuators, autonomy
-   promotion.
+5. **Act.** KB edits, calendar and Gmail-draft actuators per the autonomy table; spending and
+   deletion always via approval.
 
-## Open decisions
+## Decisions
 
-1. Active goals and access to Codex Vitae / values in Drive `system/` to seed `life/goals/`.
-2. Initial autonomy list beyond the defaults.
-3. Message volume target (e.g. heartbeat silent unless something crosses a threshold).
-4. Whether Janice is a user (second Telegram chat, shared memory) or only a subject.
+1. Health split: local Gemma lane, Claude for the rest; best model per task within the monthly cap.
+2. Autonomy and message budget: as above.
+3. Goals: drafted in `life/goals/` for Sheep's review; "proposed" targets need confirmation.
+4. Only Sheep uses the system (one Telegram chat); other family members appear only as subjects
+   in `people/` and `health/`, which stay in the local lane.
