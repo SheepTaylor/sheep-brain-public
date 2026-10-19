@@ -1,3 +1,8 @@
+---
+name: telegram-bot
+description: Architecture, query routing, two-tier KB loading, local-only privacy domains, and alert conventions for agents/telegram_bot.py and shared/telegram.py. Use when working on Telegram bot commands, KB routing, or notification alerts.
+---
+
 # Telegram Bot
 
 `agents/telegram_bot.py`, running as `agent-telegram-bot.service` (user unit, `Restart=always`).
@@ -9,7 +14,7 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 |---|---|
 | plain text, `/ask <q>` | route through the life KB, answer with the local model; escalate to Haiku 5.5 when the local answer ends with `CONFIDENCE: low` or the local model is down |
 | `/ask more <q>` | same context, answered by Sonnet 5.5 |
-| `/ask deep <q>` | same context, answered by Opus 5 (the only way Opus is ever used) |
+| `/ask deep <q>` | same context, answered by Opus 5.5 |
 | `/status` | timers (next run, failed units), disk, age of `backup.log` / `mirror.log`, loaded local model, month spend from `token_usage`, last observation per agent |
 | `/report` | newest `reports` row (the weekly brief) |
 | `/model big\|small` | runs `~/bin/llm-model`, which restarts `llama-server` |

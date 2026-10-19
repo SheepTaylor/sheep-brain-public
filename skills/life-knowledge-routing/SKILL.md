@@ -1,3 +1,8 @@
+---
+name: life-knowledge-routing
+description: Two-tier index routing protocol for navigating and querying Sheep's personal Life Knowledge Base at /srv/sheep_brain/agent-shared/life/. Use whenever a query touches personal domains (finance, health, household, vehicles, people, legal, digital, interests) to keep token cost under ~3,500 tokens.
+---
+
 # Life Knowledge Base Routing Protocol
 
 This skill documents the protocol for navigating and querying the hierarchical Life Knowledge Base located at `/srv/sheep_brain/agent-shared/life/`.
