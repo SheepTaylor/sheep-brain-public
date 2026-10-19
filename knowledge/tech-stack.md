@@ -17,7 +17,6 @@
 ## LLM Runtimes
 - **Claude Code** (`claude` CLI) — interactive sessions, agentic tasks
 - **Antigravity** (`agy` CLI / Antigravity 2.0) — interactive sessions, agentic tasks (equal partner with Claude Code)
-- **Gemini CLI** (`gemini` CLI) — parallel/secondary queries
 - Anthropic SDK (`anthropic` Python package) — for any programmatic Claude API calls
 
 ## Infrastructure
@@ -28,7 +27,7 @@
 | `restic` | Off-machine encrypted backups |
 | `Tailscale` | Secure remote access; services bind to Tailscale IP only |
 | `Miniflux` | Self-hosted RSS reader, Tailscale-only |
-| `tmux` | Session persistence for interactive Claude/Antigravity/Gemini sessions |
+| `tmux` | Session persistence for interactive Claude/Antigravity sessions |
 
 ## Testing
 - `pytest` — all agent modules; run with `python3 -m pytest tests/`

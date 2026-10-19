@@ -9,7 +9,6 @@ Dedicated home server / mini PC running Ubuntu 24.04. Always-on; remote access v
 Interactive layer               Scheduled layer
   Claude Code (claude CLI)        systemd timers → domain agents
   Antigravity (agy CLI / IDE)     synthesis agent (weekly)
-  Gemini CLI
   Telegram bot (agent-telegram-bot.service, life KB Q&A, /status)
          │                               │
          └──────────────┬────────────────┘
