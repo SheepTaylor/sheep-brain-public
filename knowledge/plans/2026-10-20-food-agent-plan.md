@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: decisions settled 2026-10-20, awaiting Sheep's go; design agreed with Antigravity (2 rounds, see
+Status: approved 2026-10-20; Phase 0 built on `scratch/food`; design agreed with Antigravity (2 rounds, see
 Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -173,7 +173,7 @@ A 100-recipe import is about $2–3. After that, steady use costs cents per mont
 
 | # | Deliverable |
 |---|---|
-| 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals |
+| 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals (built 2026-10-20 on `scratch/food`; see Phase 0 results) |
 | 1 | `/recipe <text|url>` ingest, structuring + taxonomy, card, `/recipes`, `/recipe <id>` (+servings, course, scale, why, delete-with-confirm), card-reply edits, duplicates |
 | 2 | Photos, albums and PDFs: bot media handling, `llm.ask_vision`, originals on disk, restic path; optional bulk import of an existing collection |
 | 3 | Meal log: `/ate`, rating buttons, `/meals`; agent tools for plain-language questions |
@@ -206,3 +206,22 @@ narrowed. Round 2: AGREE. Note for Phase 1/2: card replies must be intercepted b
 `feedback.record_reply()` and `privacy_route()`.
 Round 3 (share sheet, image files, Sheep's decisions): AGREE, with the stateless reply-to
 button design and HEIC conversion adopted.
+
+## Phase 0 results (2026-10-20)
+
+- USDA: Foundation (2026-04) + SR Legacy (2018-04), 6,996 foods after skipping baby, fast, restaurant
+  and prepared foods, plus 12,598 portions. The data adds about 2.6 MB to the DB, and loading takes 3 s.
+  Foundation foods that report fat only as the NLEA total, or report no energy, get fallbacks.
+- Matching takes two Haiku calls per recipe (name each line the USDA way, then pick from relaxed
+  FTS5 candidates), with one retry on an unreadable reply. A first try that picked straight from
+  plain FTS results scored 1/10. Portion-table grams were dropped because the model reads the portions better;
+  stated weights are still converted in code.
+- Eval against Allrecipes labels: 4–5 of 10 within tolerance (calories ±15%, protein and sodium
+  ±20%). Sonnet scored no better at 8× the cost. The gaps that remain are mostly label conventions,
+  checked by hand: Allrecipes counts ground meat after cooking losses (meatloaf: 357 cal raw against
+  a 284 label), counts "salt to taste", and assumes regular beef where the recipe says lean. The
+  ratchet is set at the baseline (4), not the 8 first planned.
+- Run-to-run variance on a fresh match is up to ~35% on one nutrient (which broth, how big "2
+  potatoes" is). The SDK refuses `temperature` for these models, so stability comes from the
+  per-line cache: the first match of a line is kept.
+- Cost: about $0.008 per 10-recipe eval run on Haiku.
