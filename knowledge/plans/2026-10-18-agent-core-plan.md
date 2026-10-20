@@ -259,8 +259,14 @@ budget), this section wins.
 - **Email (P10).** Drafts via IMAP APPEND to Gmail Drafts with the existing app password. Sending (smtplib, same
   password) only for a class Sheep approves after the monthly reflection reports its draft-approval record; no
   promotion state machine.
-- **Calendar.** Proposed to drop: Google Calendar needs OAuth, and reminders are follow-ups delivered by Telegram.
-  Pending Sheep's answer.
+- **Calendar (Sheep wants calendar entries, 2026-10-20).** Google Calendar v3 REST via stdlib `urllib` (no Google
+  client library), one-time OAuth consent with the consent screen set to "In production" (in "Testing", refresh
+  tokens expire every 7 days); the refresh token lives in a mode-600 file under ~/.config, never in git.
+  Privacy: every read passes `privateExtendedProperty=agent_core=1`, so the agent sees only events it created and
+  never Sheep's own entries (medical and family appointments stay invisible to Claude). Act tier for its own
+  events: dated follow-ups (renewals, maintenance; not health appointments) become all-day events with a reminder,
+  upserted idempotently by a deterministic key (`agent_key=<topic>:<date>`), each reported in the digest with an
+  [Undo] button; `/check cancel <id>` removes its event too. Events it didn't create are untouchable.
 
 ## Decisions
 
