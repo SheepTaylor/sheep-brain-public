@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: approved 2026-10-20; Phase 0 built on `scratch/food`; design agreed with Antigravity (2 rounds, see
+Status: approved 2026-10-20; Phases 0–1 live 2026-10-20 (agent-system 10e66cd); design agreed with Antigravity (2 rounds, see
 Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -173,8 +173,8 @@ A 100-recipe import is about $2–3. After that, steady use costs cents per mont
 
 | # | Deliverable |
 |---|---|
-| 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals (built 2026-10-20 on `scratch/food`; see Phase 0 results) |
-| 1 | `/recipe <text|url>` ingest, structuring + taxonomy, card, `/recipes`, `/recipe <id>` (+servings, course, scale, why, delete-with-confirm), card-reply edits, duplicates |
+| 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals (live 2026-10-20; see Phase 0 results) |
+| 1 | `/recipe <text|url>` ingest, structuring + taxonomy, card, `/recipes`, `/recipe <id>` (+servings, course, scale, why, delete-with-confirm), card-reply edits, duplicates, share-sheet links/text (live 2026-10-20 with Phase 0; Antigravity code review: 5 bugs fixed, CONFIRMED) |
 | 2 | Photos, albums and PDFs: bot media handling, `llm.ask_vision`, originals on disk, restic path; optional bulk import of an existing collection |
 | 3 | Meal log: `/ate`, rating buttons, `/meals`; agent tools for plain-language questions |
 | 4 | `/suggest` (+ `quick`, `<Ncal`, course, `week`) with side pairing |
@@ -225,3 +225,5 @@ button design and HEIC conversion adopted.
   potatoes" is). The SDK refuses `temperature` for these models, so stability comes from the
   per-line cache: the first match of a line is kept.
 - Cost: about $0.008 per 10-recipe eval run on Haiku.
+- Ground meat browned and drained (Sheep's choice): the raw food becomes its USDA cooked crumbles,
+  and the weight is scaled by protein. Eval 6/10 on scratch and 7/10 on candidate; ratchet 6.

@@ -18,6 +18,10 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | `/status` | timers (next run, failed units), disk, age of `backup.log` / `mirror.log`, loaded local model, month spend from `token_usage`, last observation per agent |
 | `/report` | newest `reports` row (the weekly brief) |
 | `/model big\|small` | runs `~/bin/llm-model`, which restarts `llama-server` |
+| `/recipe <link or text>` | food agent (`shared/food.py`): structure (Haiku), course/tags from fixed lists, USDA per-serving nutrition, saved; replies with a `🍽 #id` card. `/recipe 12 [servings N \| course X \| scale F \| why \| delete]`; delete asks with [Delete]/[Keep] |
+| `/recipes [words]` | FTS5 search plus filters: course words (dinner = main), `quick`, `<500cal`, tags, cuisine |
+| a reply to a `🍽 #id` card | revises that recipe (re-structure + recompute); intercepted before feedback, questions and the privacy router |
+| a bare shared link, or shared text with an Ingredients heading (not a reply) | [Save recipe]/[Ignore] buttons sent as a reply; on tap the bot reads the link/text from `reply_to_message` (no stored state) |
 
 ## Two-tier KB load (`shared/kb.py`)
 1. `life/_index.md` → local model names ONE domain (validated against the index; keyword fallback if the model is down).
