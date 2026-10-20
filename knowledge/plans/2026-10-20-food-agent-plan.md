@@ -63,10 +63,18 @@ shared/agent_tools.py    search_recipes, get_recipe, meal_history, suggest_meals
 |---|---|---|---|
 | Pasted text | `/recipe <text>` | as is | — |
 | Link | `/recipe <url>` | the page's `schema.org/Recipe` JSON-LD (most recipe sites carry it), else the stripped page text | none for JSON-LD |
+| Shared link (Android share → Telegram) | a message that is only a URL, or a page title + URL | as Link | as Link |
 | PDF | sent as a document | `pdftotext`; with no text layer, `pdftoppm` → treat as photos | — |
-| Photo(s) | sent as a photo; an album is one recipe | `ask_vision`, transcribe verbatim | Sonnet 5.5 |
+| Photo(s) | sent as a photo, or as an image file (.jpg/.jpeg/.png/.heic document); an album is one recipe | `ask_vision`, transcribe verbatim | Sonnet 5.5 |
 
 A photo sent as a reply to a recipe card appends a page, and the card is re-structured.
+
+**Android share sheet.** Share → Telegram → the bot chat works from any app. Images and PDFs need no
+command. A bare shared link is caught before `privacy_route()` (the message is only a URL, or a
+one-line title plus a URL) and gets [Save recipe] / [Ignore] buttons, because a link alone isn't
+necessarily a recipe. Shared text from a recipe app (multi-line, with an "Ingredients" heading)
+gets the same buttons. The buttons are needed because the bot can't add a `/recipe` prefix to a
+share. Added 2026-10-20 after Sheep asked; Antigravity has not reviewed this yet.
 
 Then one structuring call (`recipe_structure`, Haiku 5.5) returns strict JSON. Course and tags
 are checked against a fixed list in code; anything outside it is dropped, not invented.
