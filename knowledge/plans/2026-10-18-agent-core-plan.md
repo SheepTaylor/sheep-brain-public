@@ -193,7 +193,9 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
 2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader. Built 2026-10-18:
    up to 2 checked revision rounds (one round let the revision introduce new errors); `alerts` tool
    added after a run re-raised a charge Sheep had dismissed; dry runs void their forecasts.
-3. **Learning loop** (revised 2026-10-20, see below).
+3. **Learning loop** (revised 2026-10-20, see below). Built 2026-10-20 (1d43cbf): two design points
+   settled with Antigravity during the build (learned rules as atomic rows appended at load time, not git
+   commits from the live worktree; reflection inputs whitelisted), and its code review found four bugs, fixed.
 4. **Consolidate** (revised 2026-10-20).
 5. **Act** (revised 2026-10-20).
 

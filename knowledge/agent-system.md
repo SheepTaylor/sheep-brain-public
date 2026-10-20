@@ -65,6 +65,28 @@ message starting "1. … 2. …" within 72 h of a batch. Answers land in `agent_
 them go into the next review's prompt ("act on these; don't ask again"). An unroutable message sent while
 questions are open gets a hint on how to answer.
 
+## Learning loop (Phase 3, migration 013)
+- `agent/playbook.md` (`shared/playbook.py`): standing instructions by section ("General" + "Weekly review" /
+  "Follow-up"); rules Sheep applied from reflections (`agent_proposals`, status applied and not superseded) are
+  appended at load time. During development, applied rules are folded into the file and marked `folded`.
+- `agent_memory` (`shared/memory.py`, `remember` tool): preferences, facts, dismissals; every active row (≤60,
+  ~1.5k tokens) plus answered questions goes into each run's prompt via `agent.sheep_context()`; rows expire or are
+  superseded, never deleted.
+- `goal_status` tool (`shared/goals.py`): every goals.md goal computed in code, targets read from goals.md's
+  Target cells / budget.md / bills.md; goals without a computer are "not computed".
+- Follow-ups: `schedule_followup` tool adds `event_checks` rows with `kind='agent'`; `event_check_agent` runs them
+  through the agent core (playbook "Follow-up") and sends "🤖 Follow-up: …". `/check` shows 🔎 web / 🤖 agent.
+- `agents/reflection_agent.py`: monthly (30 days after the last; first one 30 days after the first review) or when
+  ≥3 👎 on agent-core messages or ≥3 non-rehearsal runs shipped with unverified figures/doubts. Inputs are
+  whitelisted: non-manual runs of cloud tasks, feedback/answers only on `review_agent` / `event_check_agent`
+  messages. Opus returns an assessment, ≤3 rules (Telegram [Apply]/[Reject], then [Revert]) and ≤3 regression
+  cases kept in the run's detail. `--force`, `--dry-run`.
+- Revision guard: a revision with more unsupported figures than the draft before it is discarded; the critic sees
+  its previous round's issues and may not reverse its own fixes.
+- Evals (`shared/evals.py`): `replay` (free; tests/evals/cases.json, also run by pytest), `dump RUN_ID` (dev time),
+  `live --max-usd 1.00` (tests/evals/live.json through the agent with read-only tools).
+- `read_only=True` (evals, dry runs) hides `remember`, `schedule_followup`, `record_prediction`.
+
 ## Self-correction (Phase 2)
 - `shared/verify.py` claims check: every amount, percentage and date in a draft must appear in the run's evidence
   (system context, task prompt, tool results, web citations; rounding to the unit or cent shown, ±5% for "about",
@@ -108,6 +130,7 @@ Live in `~/.config/systemd/user/`; tracked copies in `infra/`. Install with `cp 
 - `agent-health-connect.timer` — daily 23:30, Health Connect export → `health_facts`
 - `agent-event-check.timer` — daily 08:15, due one-off event checks → web search → Telegram
 - `agent-review.timer` — weekly Mon 07:45, agent core weekly review (shadow trial)
+- `agent-reflection.timer` — daily 09:30 check; the reflection runs only when due (monthly, or after ≥3 👎 / ≥3 flagged runs)
 - `candidate-db-refresh.timer` — nightly live→candidate DB snapshot
 - `restore-drill.timer` — quarterly `~/scripts/restore-drill.sh` from the offsite mirror, result to Telegram
 - `agent-telegram-bot.service` — the routing bot (not a timer; `Restart=always`)
