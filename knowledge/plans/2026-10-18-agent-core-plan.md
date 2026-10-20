@@ -196,7 +196,8 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
 3. **Learning loop** (revised 2026-10-20, see below). Built 2026-10-20 (1d43cbf): two design points
    settled with Antigravity during the build (learned rules as atomic rows appended at load time, not git
    commits from the live worktree; reflection inputs whitelisted), and its code review found four bugs, fixed.
-4. **Consolidate** (revised 2026-10-20).
+4. **Consolidate** (revised 2026-10-20). Built 2026-10-20 (f46e2d1) except the retirements, which wait for Nov 2 and Sheep's
+   OK; build design agreed with Antigravity (5 changes) and its code review found three bugs, fixed.
 5. **Act** (revised 2026-10-20).
 
 ## Revision 2026-10-20: Phases 3–5 after an independent review
