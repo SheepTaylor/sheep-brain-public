@@ -227,3 +227,14 @@ button design and HEIC conversion adopted.
 - Cost: about $0.008 per 10-recipe eval run on Haiku.
 - Ground meat browned and drained (Sheep's choice): the raw food becomes its USDA cooked crumbles,
   and the weight is scaled by protein. Eval 6/10 on scratch and 7/10 on candidate; ratchet 6.
+
+## Blocked sites (2026-10-20, live dca3872)
+
+Some recipe sites refuse automated reads (Cloudflare challenges, HTTP 403). Tried and rejected:
+browser-like headers (still 403), headless Chrome (stuck on the challenge page), Anthropic's
+server-side web fetch (url_not_accessible) and Internet Archive Save Page Now (523). Adopted, with Antigravity's agreement:
+`fetch()` decodes gzip/deflate (NYT Cooking sends gzip unasked, which hid its recipe data) and zstd
+(through the `zstd` CLI, for archive copies). When a site blocks the read, or its page has no recipe data,
+the bot uses the newest Internet Archive snapshot (`id_` raw form) and the card says so. With no
+snapshot, the reply asks for pasted text. Photos and PDFs (Phase 2) cover the rest: a screenshot,
+or Chrome → Share → Print → Save as PDF.
