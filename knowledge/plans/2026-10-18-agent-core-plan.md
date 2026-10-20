@@ -193,12 +193,74 @@ sensor + tool. Sensors, `finance_api`, notify/OnFailure, backups and SDLC tiers 
 2. **Self-correction.** `verify.py` claims check, critic pass, `agent_predictions` + grader. Built 2026-10-18:
    up to 2 checked revision rounds (one round let the revision introduce new errors); `alerts` tool
    added after a run re-raised a charge Sheep had dismissed; dry runs void their forecasts.
-3. **Learning loop.** Playbook, lessons, memory, weekly Opus reflection, eval suite seeded from
-   history.
-4. **Consolidate.** Daily Haiku heartbeat replaces the financial/budget nags; Telegram becomes
-   the agent; retire the paragraph agents one at a time.
-5. **Act.** KB edits, calendar and Gmail-draft actuators per the autonomy table; spending and
-   deletion always via approval.
+3. **Learning loop** (revised 2026-10-20, see below).
+4. **Consolidate** (revised 2026-10-20).
+5. **Act** (revised 2026-10-20).
+
+## Revision 2026-10-20: Phases 3–5 after an independent review
+
+Reviewed with Antigravity (Gemini 4 Argon) over three rounds; every change below was agreed by both reviewers.
+Where it differs from earlier sections of this plan (self-learning items 2, 4–7, the autonomy table, the message
+budget), this section wins.
+
+### Phase 3: learning loop
+- **Memory (P1).** One `agent_memory` table (kind preference | fact | dismissal, text, source, created_at, expires_at,
+  superseded_by) and a `remember` tool. All active rows are injected into the prompt, capped at ~60 rows / ~1.5k
+  tokens, newest first; no `recall` search tool, because the model can't search for a dismissal it doesn't know
+  exists. Answered questions stay injected alongside. No `lessons.md`, no `health-playbook.md`, no local reflection.
+- **Playbook.** `agent/playbook.md` (git) replaces the review's hard-coded instructions; rules learned by
+  reflection are edits to it.
+- **goal_status() (P2).** A deterministic tool computing each goal's current value, target and status from the
+  goals that have a data source, so goal figures stop drifting between runs. `health_signals` gets per-metric
+  plausibility bounds and labels "heart rate min" as the daily minimum, not resting heart rate. The matching goals.md wording ("resting HR") is offered
+  to Sheep as an edit, not made silently.
+- **Reflection (P3, A2).** Monthly, plus a triggered run after ≥3 👎 or ≥3 shipped unverified figures / reviewer
+  doubts since the last one. Opus. Inputs: feedback, answered questions, graded forecasts, shipped unverified
+  figures and doubts, tool errors and 0-row queries, cost per run. Output: a playbook diff with [Apply]/[Reject]
+  buttons and at most 3 new regression cases. Propose-only; no auto-apply and no auto-rollback. Silence is not
+  feedback.
+- **Revision guard (P4).** If a revision has more unsupported figures than the draft before it, ship the earlier
+  draft. On revision rounds the critic sees the prior round's issues and must not reverse a fix it ordered unless
+  that fix introduced a factual error.
+- **Evals (P4).** Free deterministic replay of past failures in pytest (claims check, parsers, tool mocks); paid
+  model/judge evals only through an explicit `python3 -m shared.evals` with a cost cap.
+- **Follow-ups (P5).** `event_checks` gains `kind` (web | agent) and `run_id`; `schedule_followup(due_date, topic,
+  question, context)` adds agent follow-ups, which `event_check_agent` runs through `agent.run_agent`. In Phase 3 a
+  follow-up sends its own message; from Phase 4 it feeds the digest. `/check` lists both kinds.
+- **Tool fixes (P11).** `query_db` / `db_schema` say that account names carry "(...xxxx)" suffixes and to match
+  with LIKE; a 0-row result from an `=` / `IN` comparison on names appends that hint.
+
+### Phase 4: consolidate
+- **Heartbeat (P7).** Daily, gated by a deterministic diff (new bill emails, a new Monarch import, due follow-ups,
+  wearable anomalies, a stale Monarch export (>7 days), queued messages); the model runs only when something
+  changed. The digest gets the same checks as the review: claims check, critic only if it proposes an action (P12).
+- **Message budget.** A per-day counter in `telegram.send` for non-critical proactive messages; over budget → an
+  outbox row flushed into the next digest. Nothing is dropped; no ranking model.
+- **Conversational bot (P6, A1).** Slash commands stay deterministic. Plain text goes through a local privacy
+  pre-router first: health/people questions are answered entirely in the local lane; if the local router is down,
+  anything matching health/people keywords is refused for cloud ("local model unavailable"). Everything else goes
+  to the agent loop with the claims check and at most one revision; the critic runs only if an actuator/propose
+  tool was called.
+- **Risk watch, read-only (P8, moved from Phase 5).** An agent pass reads insurance, subscriptions, vehicles,
+  maintenance and estate files and turns dated obligations into follow-ups due 35 days before the obligation
+  (deduplicated by topic + date). Gated on file sha256/mtime in `agent_state`, plus a pass on the 1st of each month
+  for seasonal maintenance. No date parser over free-form markdown; nothing new for Sheep to curate.
+- **Retirements (P7, A3).** `synthesis_agent` only after the shadow comparison ends (Nov 2) and Sheep's explicit OK;
+  then `financial_agent` entirely (its stale-export nag moves to the heartbeat). Stop the now-unread
+  `observations` writes in `bills_agent`, `budget_agent`, `event_check_agent` and `health_agent`; the table stays as
+  history and `/status` shows last runs from `agent_runs` and the sync logs. `budget_agent` (deterministic monthly
+  note) and `health_agent`'s Sunday local health note stay.
+
+### Phase 5: act
+- **KB edits (P9).** Act for notes code doesn't parse (e.g. Codex Vitae answers): git commit, reported in the next
+  digest with a [Revert] button. Propose ([Commit]/[Discard] with the diff) for files code parses (bills.md,
+  budget.md, goals/*.md, */_index.md); their parsers must load cleanly before and after. Removing content is always
+  propose. health/ and people/ stay off-limits to cloud tools.
+- **Email (P10).** Drafts via IMAP APPEND to Gmail Drafts with the existing app password. Sending (smtplib, same
+  password) only for a class Sheep approves after the monthly reflection reports its draft-approval record; no
+  promotion state machine.
+- **Calendar.** Proposed to drop: Google Calendar needs OAuth, and reminders are follow-ups delivered by Telegram.
+  Pending Sheep's answer.
 
 ## Decisions
 
