@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: draft for Sheep's approval 2026-10-20; design agreed with Antigravity (2 rounds, see
+Status: decisions settled 2026-10-20, awaiting Sheep's go; design agreed with Antigravity (2 rounds, see
 Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -74,7 +74,10 @@ command. A bare shared link is caught before `privacy_route()` (the message is o
 one-line title plus a URL) and gets [Save recipe] / [Ignore] buttons, because a link alone isn't
 necessarily a recipe. Shared text from a recipe app (multi-line, with an "Ingredients" heading)
 gets the same buttons. The buttons are needed because the bot can't add a `/recipe` prefix to a
-share. Added 2026-10-20 after Sheep asked; Antigravity has not reviewed this yet.
+share. The prompt replies to the shared message, so on a tap the bot reads the URL or text from
+`callback_query.message.reply_to_message`, with no stored state (`telegram.send_one` gains
+`reply_to_message_id`). HEIC files are converted to JPEG with an installed CLI tool before
+vision, and the original is kept.
 
 Then one structuring call (`recipe_structure`, Haiku 5.5) returns strict JSON. Course and tags
 are checked against a fixed list in code; anything outside it is dropped, not invented.
@@ -182,16 +185,14 @@ Later options (not in this plan): `/suggest new` (web search for recipes like th
 a weekly dinner idea in the heartbeat (proactive, budgeted); health-aware suggestions through a
 whitelisted local-lane signal.
 
-## Decisions needed (Sheep)
+## Decisions (Sheep, 2026-10-20)
 
-1. **Nutrition:** USDA reference data + computed totals (recommended), or a model estimate (quicker to
-   build, numbers drift).
-2. **Whose meals:** Sheep only (recommended, matching "Sheep is the only user"), or a `who` per
-   entry for the household.
-3. **Privacy:** recipes and the meal log are cloud-allowed (recommended; they aren't health
-   records). They are never joined with `health_facts` in a cloud call.
-4. **Existing collection:** is there one to bulk-import in Phase 2 (cookbook photos, cards, a Drive
-   folder, an app export such as Paprika)? If so, use a Drive `feeds/recipes/` drop folder.
+1. **Nutrition:** USDA reference data + computed totals.
+2. **Whose meals:** Sheep only (no `who` column).
+3. **Privacy:** recipes and the meal log are cloud-allowed. They are never joined with
+   `health_facts` in a cloud call.
+4. **Existing collection:** yes, in Google Drive (location to be confirmed). Phase 2 bulk-imports it
+   from a Drive `feeds/recipes/` drop folder, read only (originals stay where they are).
 
 ## Review (Antigravity, 2026-10-20)
 
@@ -203,3 +204,5 @@ ranking. Claude kept, and Antigravity accepted: the USDA data stays in `agent.db
 no exception to `get_db()`), side pairing stays ("dishes and meals"), and `SENSITIVE` is not
 narrowed. Round 2: AGREE. Note for Phase 1/2: card replies must be intercepted before
 `feedback.record_reply()` and `privacy_route()`.
+Round 3 (share sheet, image files, Sheep's decisions): AGREE, with the stateless reply-to
+button design and HEIC conversion adopted.
