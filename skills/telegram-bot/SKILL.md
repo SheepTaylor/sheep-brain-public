@@ -21,6 +21,7 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | `/recipe <link or text>` | food agent (`shared/food.py`): structure (Haiku), course/tags from fixed lists, USDA per-serving nutrition, saved; replies with a `🍽 #id` card. `/recipe 12 [servings N \| course X \| scale F \| why \| delete]`; delete asks with [Delete]/[Keep] |
 | `/recipes [words]` | FTS5 search plus filters: course words (dinner = main), `quick`, `<500cal`, tags, cuisine |
 | a reply to a `🍽 #id` card | revises that recipe (re-structure + recompute); intercepted before feedback, questions and the privacy router |
+| a photo, document (PDF, Word, image) or album, from either chat | food agent Phase 2: read as one recipe (text locally, else Sonnet vision), caption as a hint, originals kept; as a reply to a `🍽 #id` card it adds a page. Albums are buffered by `media_group_id` in `poll_forever` and read 2.5 s after the last part |
 | a bare shared link, or shared text with an Ingredients heading (not a reply) | [Save recipe]/[Ignore] buttons sent as a reply; on tap the bot reads the link/text from `reply_to_message` (no stored state) |
 
 ## Menu and buttons (2026-10-21)

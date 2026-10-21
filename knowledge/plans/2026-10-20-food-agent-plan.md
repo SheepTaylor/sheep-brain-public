@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: approved 2026-10-20; Phases 0–1 live 2026-10-20 (agent-system 10e66cd); design agreed with Antigravity (2 rounds, see
+Status: approved 2026-10-20; Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 (a09a8c7); design agreed with Antigravity (2 rounds, see
 Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -175,7 +175,7 @@ A 100-recipe import is about $2–3. After that, steady use costs cents per mont
 |---|---|
 | 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals (live 2026-10-20; see Phase 0 results) |
 | 1 | `/recipe <text|url>` ingest, structuring + taxonomy, card, `/recipes`, `/recipe <id>` (+servings, course, scale, why, delete-with-confirm), card-reply edits, duplicates, share-sheet links/text (live 2026-10-20 with Phase 0; Antigravity code review: 5 bugs fixed, CONFIRMED) |
-| 2 | Photos, albums and PDFs: bot media handling, `llm.ask_vision`, originals on disk, restic path; optional bulk import of an existing collection |
+| 2 | Photos, albums and PDFs: bot media handling, `llm.ask_vision`, originals on disk, restic path; bulk import of the Drive collection (live 2026-10-21, a09a8c7; see Phase 2 results) |
 | 3 | Meal log: `/ate`, rating buttons, `/meals`; agent tools for plain-language questions |
 | 4 | `/suggest` (+ `quick`, `<Ncal`, course, `week`) with side pairing |
 
@@ -191,8 +191,8 @@ whitelisted local-lane signal.
 2. **Whose meals:** Sheep only (no `who` column).
 3. **Privacy:** recipes and the meal log are cloud-allowed. They are never joined with
    `health_facts` in a cloud call.
-4. **Existing collection:** yes, in Google Drive (location to be confirmed). Phase 2 bulk-imports it
-   from a Drive `feeds/recipes/` drop folder, read only (originals stay where they are).
+4. **Existing collection:** yes: Drive `archive/Recipes` (about 100 files; Sheep, 2026-10-21). It was copied
+   locally with rclone, with `Icings/Family Tree/` left out, and bulk-imported. The originals stay in Drive.
 
 ## Review (Antigravity, 2026-10-20)
 
@@ -238,3 +238,33 @@ server-side web fetch (url_not_accessible) and Internet Archive Save Page Now (5
 the bot uses the newest Internet Archive snapshot (`id_` raw form) and the card says so. With no
 snapshot, the reply asks for pasted text. Photos and PDFs (Phase 2) cover the rest: a screenshot,
 or Chrome → Share → Print → Save as PDF.
+
+## Phase 2 results (2026-10-21, live a09a8c7)
+
+- **Files:** the file type is read from the contents (Drive files often lack an extension). Text comes from
+  pdftotext, docx and oxps XML, and plain text. A long web printout keeps only its recipe pages and their
+  neighbours. A file holding only a link is read as that link. Photos are scaled to a 2000 px long edge.
+  Photos, scanned PDFs and pictures inside a .docx go to Sonnet vision, one call per recipe. A short PDF
+  whose text layer doesn't read as a recipe (scanner OCR garbage) is read again as a scan.
+- **Bot:** accepts photos, documents and albums (grouped by `media_group_id` and read 2.5 s after the
+  last part). A caption is passed to the model as a hint. A photo sent as a reply to a card adds a page.
+  Replies go back to the chat the photo came from (Moose's or Sheep's). Originals are kept in
+  `~/data/<env>/recipes/<id>/`, which the nightly restic backup already covers (`/home/sheep/data`).
+- **Bulk import** (`food_agent import DIR`): files whose names differ only by "page N" are grouped, and
+  photos with timestamped names less than 2 minutes apart are paired (front and back of a card). A PDF
+  with 4 or more recipe-like pages is a book and is read page by page. Family-tree folders and
+  `Label-*.pdf` shipping labels are never sent to a model. Each result goes to `import-log.json`, so a
+  re-run only retries failures.
+- **Servings:** when a recipe doesn't say, the model estimates servings. The card marks the figure as
+  estimated (migration 016), and with no estimate at all it shows whole-recipe totals.
+- **Scratch trial:** 122 of 125 units saved for about $0.45. Misses: a 2015 Allrecipes print link that is
+  gone with no archive copy, and a Facebook restaurant post (correctly not a recipe).
+- **Antigravity reviews:** 5 findings fixed (add_pages dropping short text, uncapped prompts and an open-ended
+  scan fallback, Drive zip reads and picture-only .docx, HEIC temp files, over-eager grouping), plus the
+  run trigger after the merge with the menu/Moose work.
+- **Live import (2026-10-21):** 121 saved, 1 duplicate, 2 not recipes, 1 failed; 124 recipes in live; 31
+  servings estimated; $0.44; originals 53 MB in `~/data/live/recipes/`. Failed: a Mini Applesauce Muffins
+  link (site blocks, no archive copy). Not recipes: a Facebook restaurant post, and "Laura's Aunt - Lillian
+  Scroggs.pdf", which is a handwritten family letter. That letter was sent to Haiku (OCR text) and Sonnet
+  (scan) before being rejected. Nothing was stored, but family content reached a cloud model; the skip
+  list only knew folder names.
