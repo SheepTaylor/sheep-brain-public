@@ -39,6 +39,20 @@ are served, everything else is logged and ignored. Replies go through `shared/te
   shows the current model with [Big] [Small] (`mdl:`).
 - Callback prefixes in use: `m:` `rs:` `c:` `mdl:` `r:` `p:` `q:`. callback_data must stay ≤ 64 bytes.
 
+## Moose's chat (2026-10-21)
+- `TELEGRAM_MOOSE_CHAT_ID` (agent-system.env) makes a second served chat; `person(chat_id)` → "sheep"/"moose".
+  Unset = Sheep only, as before.
+- Replies: `process()`/`process_callback()` run inside `telegram.replying_to(chat_id)`; only sends with
+  `agent="telegram_bot"` follow it (`REPLY_AGENTS`), so budget alerts and every scheduled agent still go to Sheep.
+  She gets no reports or notifications (Sheep, 2026-10-21).
+- Her commands: `MOOSE_COMMANDS` (menu, bills, afford, recipes, recipe, help; plus /start, /ask) and
+  `MOOSE_LAUNCHER`; others reply "isn't available here", and only `m:`, `rs:`, `r:` buttons work for her
+  (recipe delete allowed). Questions are unrestricted in scope (health still answered locally).
+- Not feedback: her reactions, 👍 messages and replies are not recorded; review questions stay Sheep's.
+- Her runs use trigger `telegram:moose`: separate conversation history, `read_only=True` (no remember /
+  follow-ups / predictions), a prompt that names her, `MOOSE_ANSWER_SYSTEM` for KB answers; reflection
+  skips them and /status's sent count excludes her chat.
+
 ## Two-tier KB load (`shared/kb.py`)
 1. `life/_index.md` → local model names ONE domain (validated against the index; keyword fallback if the model is down).
 2. `<domain>/_index.md` → leaf links; one level of sub-index is followed (`health/sheep/`). Files the index names but that don't exist yet are dropped; if none exist the domain index itself is the context with the note "has no leaf files yet".
