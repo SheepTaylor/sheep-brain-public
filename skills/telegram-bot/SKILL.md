@@ -23,6 +23,22 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | a reply to a `🍽 #id` card | revises that recipe (re-structure + recompute); intercepted before feedback, questions and the privacy router |
 | a bare shared link, or shared text with an Ingredients heading (not a reply) | [Save recipe]/[Ignore] buttons sent as a reply; on tap the bot reads the link/text from `reply_to_message` (no stored state) |
 
+## Menu and buttons (2026-10-21)
+- `COMMANDS` in `telegram_bot.py` is the one list of commands: `register_commands()` at startup clears the
+  default, all-private-chats and chat scopes (the token once served an OpenClaw bot whose 43 commands still
+  showed in ☰ Menu) and sets the chat-scope menu; `HELP` is built from the same table. Add new commands there.
+- `/menu` and `/start` send the `LAUNCHER` grid; `m:<target>` callbacks run the command via `MENU_TARGETS`.
+- Bare commands that need details (`/afford`, `/recipe`, `/ask [more|deep]`, and [Search…]/[+ New check])
+  send a `PROMPTS` text with `force_reply`; a reply whose `reply_to_message.text` equals a prompt runs as
+  `<command> <reply>` (no stored state; matched before card replies, feedback and the privacy router).
+- `/recipes` with no words: latest 10 plus filter chips (`rs:<query>`, edited in place). List rows are
+  `/recipe_12 …` tap links (normalised in `handle()`).
+- Recipe cards get [×½] [×2] [Why] [Delete] (`r:<id>:half|x2|why|ask`; Delete asks first) via `send_reply()`,
+  which adds them to any reply with a `🍽 #id` line that fits one message.
+- `/check` with no args lists with ✕ buttons per check (`c:<id>:ask` → confirm `yes`/`no`); `/model` alone
+  shows the current model with [Big] [Small] (`mdl:`).
+- Callback prefixes in use: `m:` `rs:` `c:` `mdl:` `r:` `p:` `q:`. callback_data must stay ≤ 64 bytes.
+
 ## Two-tier KB load (`shared/kb.py`)
 1. `life/_index.md` → local model names ONE domain (validated against the index; keyword fallback if the model is down).
 2. `<domain>/_index.md` → leaf links; one level of sub-index is followed (`health/sheep/`). Files the index names but that don't exist yet are dropped; if none exist the domain index itself is the context with the note "has no leaf files yet".
