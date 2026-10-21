@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: approved 2026-10-20; Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 (a09a8c7); design agreed with Antigravity (2 rounds, see
+Status: approved 2026-10-20; Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 (a09a8c7); Phase 3 live 2026-10-21 (f409cd6); design agreed with Antigravity (2 rounds, see
 Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -176,7 +176,7 @@ A 100-recipe import is about $2–3. After that, steady use costs cents per mont
 | 0 | Migration 015, `load-usda`, `nutrition.py` + match cache, CLI `food_agent nutrition "<ingredients>"`, evals (live 2026-10-20; see Phase 0 results) |
 | 1 | `/recipe <text|url>` ingest, structuring + taxonomy, card, `/recipes`, `/recipe <id>` (+servings, course, scale, why, delete-with-confirm), card-reply edits, duplicates, share-sheet links/text (live 2026-10-20 with Phase 0; Antigravity code review: 5 bugs fixed, CONFIRMED) |
 | 2 | Photos, albums and PDFs: bot media handling, `llm.ask_vision`, originals on disk, restic path; bulk import of the Drive collection (live 2026-10-21, a09a8c7; see Phase 2 results) |
-| 3 | Meal log: `/ate`, rating buttons, `/meals`; agent tools for plain-language questions |
+| 3 | Meal log: `/ate`, rating buttons, `/meals`; agent tools for plain-language questions (live 2026-10-21, f409cd6) |
 | 4 | `/suggest` (+ `quick`, `<Ncal`, course, `week`) with side pairing |
 
 Branch `scratch/food` → staging → master per phase, as usual.
@@ -268,3 +268,20 @@ or Chrome → Share → Print → Save as PDF.
   Scroggs.pdf", which is a handwritten family letter. That letter was sent to Haiku (OCR text) and Sonnet
   (scan) before being rejected. Nothing was stored, but family content reached a cloud model; the skip
   list only knew folder names.
+
+## Phase 3 results (2026-10-21, live f409cd6)
+
+`shared/meals.py`, used from Sheep's chat only (Moose's chat has no meal commands or buttons):
+- **`/ate` input:** a recipe number (`12` or `#12`; a bare number counts only if nothing else is left, so
+  "2 tacos" stays a description), a name, or free text. Dates: today, tonight, yesterday, last night,
+  weekdays, "N days ago" or YYYY-MM-DD. M/D isn't accepted, so 1/2 means a half. The meal slot comes
+  from "for dinner", a slot word at the start or end, or the time of day. Servings are also parsed.
+- **Matching:** a name is logged directly only when it matches exactly one title (or one title exactly).
+  Matches found only in ingredients or tags always ask with buttons, including a "log as typed" option.
+- **After logging:** the bot shows [👍 Again] [😐 OK] [👎 Not again] [Undo]. The latest rating is the
+  recipe's rating.
+- **History:** `/meals` lists the last 14 days and `/meals <id>` one recipe's history. Recipe cards show
+  "🍴 Made N× · last … · rating", and in Sheep's chat they have a 🍴 Ate this button.
+- **Agent tools:** `search_recipes`, `get_recipe` and `meal_history`, all on read-only connections.
+- **Review:** Antigravity's four findings were fixed: auto-picking from tag or ingredient matches, fractions
+  read as dates, slot words inside recipe names, and stale choice buttons.
