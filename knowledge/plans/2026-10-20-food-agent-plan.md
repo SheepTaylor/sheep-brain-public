@@ -285,3 +285,12 @@ or Chrome → Share → Print → Save as PDF.
 - **Agent tools:** `search_recipes`, `get_recipe` and `meal_history`, all on read-only connections.
 - **Review:** Antigravity's four findings were fixed: auto-picking from tag or ingredient matches, fractions
   read as dates, slot words inside recipe names, and stale choice buttons.
+
+## Printing (2026-10-21, live 456143b)
+
+Sheep asked for a print button. Recipe cards in both chats have 🖨 Print, and `/recipe <id> print` does the same. The
+recipe is laid out as one Letter page (title and details, nutrition table, ingredients in two columns, steps),
+turned into a PDF by headless Chrome and sent to the CUPS printer (Brother HL-L2390DW). Incident: a first
+version bound `subprocess.run` as a default argument, so a bot test printed 4 real pages (2 more queued jobs
+were cancelled). Fixed: `run` is now resolved per call, and tests stub recipe_print's subprocess. Antigravity's
+review added the double-tap guard.
