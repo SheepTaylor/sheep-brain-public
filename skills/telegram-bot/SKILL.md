@@ -6,7 +6,7 @@ description: Architecture, query routing, two-tier KB loading, local-only privac
 # Telegram Bot
 
 `agents/telegram_bot.py`, running as `agent-telegram-bot.service` (user unit, `Restart=always`).
-Stdlib only: long-polls `getUpdates` with a 50 s timeout; only messages from `TELEGRAM_CHAT_ID`
+Stdlib only: long-polls `getUpdates` with a 50 s timeout; only messages from `TELEGRAM_CHAT_ID` (and Moose's chat, below)
 are served, everything else is logged and ignored. Replies go through `shared/telegram.py`.
 
 ## Query intake
