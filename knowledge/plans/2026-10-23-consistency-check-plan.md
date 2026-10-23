@@ -1,6 +1,8 @@
 # Consistency check: the KB against the data, and against itself
 
-Status: proposed 2026-10-23, not started. Idea from the Every guide to OpenAI's Dot: its headline
+Status: approved 2026-10-23; Phase 1 (shadow) LIVE 2026-10-23 (agent-system f9ef699): `shared/consistency.py`,
+`agents/consistency_agent.py`, `agent-consistency.timer` Sun 06:30. Shadow runs Oct 25 and Nov 1; review the
+log with Sheep after Nov 1 (`select detail_json from agent_runs where agent_name='consistency_agent'`). Idea from the Every guide to OpenAI's Dot: its headline
 example was an agent that noticed, unasked, a formula error in a budget sheet that was off by $5,700.
 
 ## Problem
@@ -66,8 +68,20 @@ $0.50 a month. Registered as task `consistency` in `agent/tasks.toml`.
 2. **Report:** the weekly message with findings and questions, no diffs.
 3. **Propose:** add the `kb_changes` diffs for mechanical fixes (amounts, prices, dates, closed accounts).
 
-## Open questions for Sheep
+## Decisions (Sheep, 2026-10-23)
 
-- Is Sunday morning right, or should findings ride in the Monday review instead of a separate message?
-- The budget threshold: is 25% / $50 a month for 3 months the right sensitivity?
-- Should a `[verify]` item that the mail settles be proposed straight away, given it's what the tag asks for?
+1. Its own Sunday message, not part of the Monday review.
+2. Budget sensitivity: 25% and $50 a month off target, 3 months running.
+3. A `[verify]` item the mail settles is proposed straight away (Phase 3 diff; until then reported).
+
+## Phase 1 notes (2026-10-23)
+
+- Built: budget, bill amount, bill due day, bill missing 2 months, subscription price, subscription quiet,
+  insurance `[verify]` vs carrier mail, account roster. The cross-file facts check is deferred: matching "the
+  same figure" across free-form notes needs the model, so it belongs with the Phase 2 write-up.
+- Noise cut before launch: subscriptions with several distinct recent amounts (YouTube) are skipped; accounts
+  count as mentioned by name as well as by last four.
+- The first live dry run found 8: streaming over budget 3 months ($225/$240/$275 vs $120), the Homeowners
+  renewal email of 2026-10-20 against the `[verify]` premium, Kohl's typical $100 vs $38/$76 and its due day
+  6th vs 7th, Verizon at $149.56 in both bills.md ($170) and subscriptions.md ($187.66), Ancestry $10.70 vs
+  $17.83, Weather Channel $5.34 vs $4.27.

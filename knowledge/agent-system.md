@@ -112,6 +112,10 @@ questions are open gets a hint on how to answer.
   36h, 0-row load, ledger >7 days old), mail mirror (mail-sync result and age, no new mail in 2 days), the Drive mount
   (listing answers, retried once), Health Connect (zip age, last load), a failed latest MyChart load, backup log age.
   Deterministic, sends nothing itself; tests stub it through `heartbeat_agent.feed_check` and `telegram_bot.feeds_summary`.
+- Consistency check (`shared/consistency.py`, `agents/consistency_agent.py`, Sun 06:30, Phase 1 shadow since
+  2026-10-23): life/finance vs the data (budget, bills, subscriptions, insurance [verify], accounts); logs findings
+  and the ≤5 it would report to `agent_runs`, state key `consistency`; sends nothing. Plan
+  `knowledge/plans/2026-10-23-consistency-check-plan.md`.
 - `/status`: message budget, data feeds (one line each), last run per agent-core agent.
 - `/activity [days]` (`shared/activity.py`, Sheep only, launcher button): last run of each timer-driven unit
   (infra/*.service with a .timer), model spend per agent, agent-core runs, messages sent (bot replies counted only)
