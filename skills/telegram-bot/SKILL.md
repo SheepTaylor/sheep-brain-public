@@ -15,7 +15,8 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | plain text, `/ask <q>` | route through the life KB, answer with the local model; escalate to Haiku 5.5 when the local answer ends with `CONFIDENCE: low` or the local model is down |
 | `/ask more <q>` | same context, answered by Sonnet 5.5 |
 | `/ask deep <q>` | same context, answered by Opus 5.5 |
-| `/status` | timers (next run, failed units), disk, age of `backup.log` / `mirror.log`, loaded local model, month spend from `token_usage`, last observation per agent |
+| `/status` | timers (next run, failed units), disk, loaded local model, month spend from `token_usage`, message budget, data feeds (`shared/feeds.py`: Monarch, mail mirror, Drive, Health Connect, MyChart, backups), last run per agent-core agent |
+| `/activity [days]` | what ran in the background (`shared/activity.py`): last run per timer-driven unit, model spend per agent, agent-core runs, messages sent and held, data loads, KB proposals. Sheep only |
 | `/report` | newest `reports` row (the weekly brief) |
 | `/model big\|small` | runs `~/bin/llm-model`, which restarts `llama-server` |
 | `/recipe <link or text>` | food agent (`shared/food.py`): structure (Haiku), course/tags from fixed lists, USDA per-serving nutrition, saved; replies with a `🍽 #id` card. `/recipe 12 [servings N \| course X \| scale F \| why \| delete]`; delete asks with [Delete]/[Keep] |
