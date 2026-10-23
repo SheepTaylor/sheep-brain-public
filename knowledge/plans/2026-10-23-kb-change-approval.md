@@ -1,6 +1,6 @@
 # KB change approval: agents propose, Sheep approves, the bot applies
 
-Status: agreed with Antigravity 2026-10-23 (round 2); awaiting Sheep's approval to build
+Status: live 2026-10-23 (agent-system 134d3f6); agreed with Antigravity in round 2, and the code reviewed by Antigravity
 
 ## Problem
 

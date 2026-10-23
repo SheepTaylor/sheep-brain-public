@@ -33,7 +33,7 @@ Interactive layer               Scheduled layer
 `~/agent-shared/life/` uses a two-tier routing structure:
 - `life/_index.md` → domain `_index.md` → 1–2 leaf files per query
 - Token target: ≤ 3,500 tokens per query; the full `life/` tree is **never** bulk-loaded.
-- Agents read `life/`; no agent writes directly to it (human-curated only).
+- Agents read `life/`; no agent writes directly to it (human-curated only). To change it, an interactive agent (Claude Code, Antigravity) files a proposal with `python3 -m shared.kb_changes propose --author <agent> --why "<reason>" <patch.diff>` (unified diff, paths relative to `life/`); Sheep approves each one with a Telegram tap and the bot commits it. See `knowledge/plans/2026-10-23-kb-change-approval.md`.
 
 ## Data Assets (Irreplaceable)
 1. `~/data/live/agent.db` — accumulated observations and financial history
