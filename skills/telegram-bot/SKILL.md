@@ -26,6 +26,7 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | `/recipes [words]` | FTS5 search plus filters: course words (dinner = main), `quick`, `<500cal`, tags, cuisine |
 | a reply to a `🍽 #id` card | revises that recipe (re-structure + recompute); intercepted before feedback, questions and the privacy router |
 | a photo, document (PDF, Word, image) or album, from either chat | food agent Phase 2: read as one recipe (text locally, else Sonnet vision), caption as a hint, originals kept; as a reply to a `🍽 #id` card it adds a page. Albums are buffered by `media_group_id` in `poll_forever` and read 2.5 s after the last part |
+| a photo captioned `label …`/`inv …`, or the reply to the `/label` prompt (Sheep only) | inventory label capture (`shared/inventory.py`, 2026-10-25): Sonnet vision (`label_vision`) reads item/make/model/serial/made/details; 🏷 card with [📚 File N to KB] (`l:file`) / [✕ Discard] (`l:<id>:discard`); photos kept in `~/data/<env>/labels/<id>/`; queued rows (`inventory_labels`) go out as one `kb_changes` proposal per file (author `label capture`, `allow_long_numbers=True` so serials pass) to `household/appliances.md` or `household/inventory.md`; a file with a label proposal still pending is skipped. `/label file` does the same as the button. Checked before the recipe path; Moose's photos always go to recipes |
 | a bare shared link, or shared text with an Ingredients heading (not a reply) | [Save recipe]/[Ignore] buttons sent as a reply; on tap the bot reads the link/text from `reply_to_message` (no stored state) |
 
 ## Menu and buttons (2026-10-21)
@@ -42,7 +43,7 @@ are served, everything else is logged and ignored. Replies go through `shared/te
   which adds them to any reply with a `🍽 #id` line that fits one message.
 - `/check` with no args lists with ✕ buttons per check (`c:<id>:ask` → confirm `yes`/`no`); `/model` alone
   shows the current model with [Big] [Small] (`mdl:`).
-- Callback prefixes in use: `m:` `rs:` `c:` `mdl:` `r:` `p:` `q:`. callback_data must stay ≤ 64 bytes.
+- Callback prefixes in use: `m:` `rs:` `c:` `mdl:` `r:` `p:` `q:` `k:` `ml:` `ma:` `l:`. callback_data must stay ≤ 64 bytes.
 
 ## Moose's chat (2026-10-21)
 - `TELEGRAM_MOOSE_CHAT_ID` (agent-system.env) makes a second served chat; `person(chat_id)` → "sheep"/"moose".
