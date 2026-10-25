@@ -17,6 +17,7 @@ are served, everything else is logged and ignored. Replies go through `shared/te
 | `/ask deep <q>` | same context, answered by Opus 5.5 |
 | `/status` | timers (next run, failed units), disk, loaded local model, month spend from `token_usage`, message budget, data feeds (`shared/feeds.py`: Monarch, mail mirror, Drive, Health Connect, MyChart, backups), last run per agent-core agent |
 | `/activity [days]` | what ran in the background (`shared/activity.py`): last run per timer-driven unit, model spend per agent, agent-core runs, messages sent and held, data loads, KB proposals. Sheep only |
+| `/today`, `/week [days]` | deterministic calendar view (`shared/agenda.py`): non-routine events from primary, Moose and Sheep and the Agent calendar (🤖), merged by exact start, one-car conflicts (🚗), Gamecocks games; refreshes the calendar first when the copy is over 2 h old. Sheep only; never passed to a model |
 | `/report` | newest `reports` row (the weekly brief) |
 | `/model big\|small` | runs `~/bin/llm-model`, which restarts `llama-server` |
 | `/recipe <link or text>` | food agent (`shared/food.py`): structure (Haiku), course/tags from fixed lists, USDA per-serving nutrition, saved; replies with a `🍽 #id` card. `/recipe 12 [servings N \| course X \| scale F \| why \| delete]`; delete asks with [Delete]/[Keep] |

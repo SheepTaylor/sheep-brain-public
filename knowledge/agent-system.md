@@ -112,11 +112,23 @@ questions are open gets a hint on how to answer.
   36h, 0-row load, ledger >7 days old), mail mirror (mail-sync result and age, no new mail in 2 days), the Drive mount
   (listing answers, retried once), Health Connect (zip age, last load), a failed latest MyChart load, backup log age.
   Deterministic, sends nothing itself; tests stub it through `heartbeat_agent.feed_check` and `telegram_bot.feeds_summary`.
+  Since 2026-10-25 also Google Calendar (sign-in, failed or >36h-old sync, a synced calendar not found) and the
+  Gamecocks schedules (failed sport page, >36h old).
+- Calendar (`shared/gcal.py`, `shared/agenda.py`, plan `knowledge/plans/2026-10-25-calendar-plan.md`): `ExecStartPre`
+  of the heartbeat (and on demand for `/today`, `/week` when > 2 h old) reads −7…+60 days of primary, Moose and Sheep,
+  Agent and US holidays into `cal_events` (replaced each sync; OAuth token `~/.config/google-calendar.json`, sign in
+  with `python3 -m shared.gcal auth-start` / `auth-finish '<url>'`). `cal_events` is local-only: `query_db` and
+  `db_schema` refuse it like the health tables. Views dedupe by exact start, hide repeating events on Sheep's own
+  calendars (the phone reminds him), and flag one-car conflicts (Moose/Janice vs Sheep/Rick title prefixes, 30 min
+  drive buffer). The system writes only to the "Agent" calendar (`calendar_reminder` tool, `agent_cal_events`);
+  the risk watch puts each obligation there on its own date. Games: `gamecocks_docs.py --schedules-only` (also an
+  `ExecStartPre` of the heartbeat) → `games` (the subscribed sport calendars are empty; the pages carry no TV).
 - Consistency check (`shared/consistency.py`, `agents/consistency_agent.py`, Sun 06:30, Phase 1 shadow since
   2026-10-23): life/finance vs the data (budget, bills, subscriptions, insurance [verify], accounts); logs findings
   and the ≤5 it would report to `agent_runs`, state key `consistency`; sends nothing. Plan
   `knowledge/plans/2026-10-23-consistency-check-plan.md`.
 - `/status`: message budget, data feeds (one line each), last run per agent-core agent.
+- `/today`, `/week [days]` (Sheep only, launcher buttons): deterministic calendar + games view (`shared/agenda.py`).
 - `/activity [days]` (`shared/activity.py`, Sheep only, launcher button): last run of each timer-driven unit
   (infra/*.service with a .timer), model spend per agent, agent-core runs, messages sent (bot replies counted only)
   and held, data loads, KB proposals. Deterministic.

@@ -262,7 +262,7 @@ budget), this section wins.
 - **Email (P10).** Drafts via IMAP APPEND to Gmail Drafts with the existing app password. Sending (smtplib, same
   password) only for a class Sheep approves after the monthly reflection reports its draft-approval record; no
   promotion state machine.
-- **Calendar (Sheep wants calendar entries, 2026-10-20).** Google Calendar v3 REST via stdlib `urllib` (no Google
+- **Calendar (Sheep wants calendar entries, 2026-10-20).** *Superseded 2026-10-25 by `2026-10-25-calendar-plan.md`: the system now reads Sheep's calendars locally (cloud tools never see them) and writes only to a dedicated "Agent" calendar.* Google Calendar v3 REST via stdlib `urllib` (no Google
   client library), one-time OAuth consent with the consent screen set to "In production" (in "Testing", refresh
   tokens expire every 7 days); the refresh token lives in a mode-600 file under ~/.config, never in git.
   Privacy: every read passes `privateExtendedProperty=agent_core=1`, so the agent sees only events it created and
