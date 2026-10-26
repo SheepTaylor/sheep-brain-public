@@ -189,13 +189,13 @@ Live in `~/.config/systemd/user/`; tracked copies in `infra/`. Install with `cp 
 - `llama-server.service` — local model API (see `knowledge/plans/2026-09-08-local-ai-system-plan.md`)
 
 ## Life KB Write Rule
-Agents **read** `~/agent-shared/life/`; they **never write** to it. A KB edit happens only when Sheep approves it.
+Agents **read** the life trees (shared `/srv/household/life/`, private `~/agent-shared/life/`); they **never write** to them. A KB edit happens only when Sheep approves it.
 
 Interactive agents (Claude Code, Antigravity) may *propose* an edit (`shared/kb_changes.py`, migration 017):
 
 ```
-git -C ~/agent-shared/life diff > /tmp/x.diff   # or write the diff by hand; never edit life/ to make it
+git -C /srv/household/life diff > /tmp/x.diff   # or write the diff by hand; never edit life/ to make it
 python3 -m shared.kb_changes propose --author claude-code --why "<one line>" /tmp/x.diff
 ```
 
-Proposals are limited to markdown edits and new files. They can't delete or rename anything, can't exceed 3,000 characters, can't contain secret-looking text, and can't touch files with uncommitted edits. Sheep gets the diff on Telegram with Apply/Reject. Only that tap applies it: the bot commits the touched files with `Proposed-by` and `Approved-by` trailers, and then offers Revert. There is no approve command. Scheduled agents do not propose KB changes. Design: `plans/2026-10-23-kb-change-approval.md`.
+Proposals are limited to markdown edits and new files. They can't delete or rename anything, can't exceed 3,000 characters, can't contain secret-looking text, and can't touch files with uncommitted edits. Sheep gets the diff on Telegram with Apply/Reject. Only that tap applies it: the bot commits the touched files with `Proposed-by` and `Approved-by` trailers, and then offers Revert. There is no approve command. Scheduled agents do not propose KB changes. Proposals target the shared tree; private domains (people, interests, work) are refused. Moose edits the shared tree directly; her uncommitted edits block proposals on those files until she commits. Design: `plans/2026-10-23-kb-change-approval.md`.

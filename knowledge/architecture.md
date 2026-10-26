@@ -30,14 +30,21 @@ Interactive layer               Scheduled layer
 | `~/data/<env>/agent.db` | Per-environment SQLite DB |
 
 ## Life Knowledge Base
-`~/agent-shared/life/` uses a two-tier routing structure:
+Split in two since 2026-10-26 (`knowledge/plans/2026-10-26-moose-account-plan.md`):
+- **Shared** `/srv/household/life/` (group `household`: Sheep and Moose): the root `_index.md` and goals, household,
+  vehicles, finance, health, food, travel, digital. Both may edit it directly as people.
+- **Private** `~/agent-shared/life/` per user: `people/`, `interests/`, `work/`. Sheep's and Moose's are separate.
+- `shared/paths.py` resolves each domain to its tree from `AGENT_LIFE_SHARED` / `AGENT_LIFE_PRIVATE` in
+  `agent-system.env`. Moose's Telegram questions never reach Sheep's private domains.
+
+Both trees use a two-tier routing structure:
 - `life/_index.md` → domain `_index.md` → 1–2 leaf files per query
 - Token target: ≤ 3,500 tokens per query; the full `life/` tree is **never** bulk-loaded.
-- Agents read `life/`; no agent writes directly to it (human-curated only). To change it, an interactive agent (Claude Code, Antigravity) files a proposal with `python3 -m shared.kb_changes propose --author <agent> --why "<reason>" <patch.diff>` (unified diff, paths relative to `life/`); Sheep approves each one with a Telegram tap and the bot commits it. See `knowledge/plans/2026-10-23-kb-change-approval.md`.
+- Agents read `life/`; no agent writes directly to it (human-curated only). To change it, an interactive agent (Claude Code, Antigravity) files a proposal with `python3 -m shared.kb_changes propose --author <agent> --why "<reason>" <patch.diff>` (unified diff, paths relative to `life/`); Sheep approves each one with a Telegram tap and the bot commits it. Proposals apply to the shared tree only; private-domain edits are made by hand. See `knowledge/plans/2026-10-23-kb-change-approval.md`.
 
 ## Data Assets (Irreplaceable)
 1. `~/data/live/agent.db` — accumulated observations and financial history
-2. `~/agent-shared/life/` — curated knowledge base markdown files
+2. `/srv/household/life/` and `~/agent-shared/life/` — curated knowledge base markdown files
 
 ### Backups
 

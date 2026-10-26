@@ -1,11 +1,11 @@
 ---
 name: life-knowledge-routing
-description: Two-tier index routing protocol for navigating and querying Sheep's personal Life Knowledge Base at /srv/sheep_brain/agent-shared/life/. Use whenever a query touches personal domains (finance, health, household, vehicles, people, legal, digital, interests) to keep token cost under ~3,500 tokens.
+description: Two-tier index routing protocol for navigating and querying Sheep's personal Life Knowledge Base (shared tree /srv/household/life/, private people/interests/work in ~/agent-shared/life/). Use whenever a query touches personal domains (finance, health, household, vehicles, people, legal, digital, interests) to keep token cost under ~3,500 tokens.
 ---
 
 # Life Knowledge Base Routing Protocol
 
-This skill documents the protocol for navigating and querying the hierarchical Life Knowledge Base located at `/srv/sheep_brain/agent-shared/life/`.
+This skill documents the protocol for navigating and querying the hierarchical Life Knowledge Base split across two trees: the shared `/srv/household/life/` (root index and every domain except people, interests, work) and each user's private `~/agent-shared/life/` (people, interests, work).
 
 ## Protocol Objectives
 - **Flat Token Cost**: Keep per-query token usage under ~3,500 tokens.
@@ -15,21 +15,21 @@ This skill documents the protocol for navigating and querying the hierarchical L
 ## Navigation Steps
 
 ### 1. Identify Domain (Level 1)
-Load the root index file: `/srv/sheep_brain/agent-shared/life/_index.md`.
+Load the root index file: `/srv/household/life/_index.md`.
 Analyze the user's query to determine which of the ten domains is most relevant.
 
 ### 2. Identify Leaf Files (Level 2)
-Load the corresponding domain index file: `/srv/sheep_brain/agent-shared/life/<domain>/_index.md`.
+Load the corresponding domain index file: `<tree>/<domain>/_index.md` (private tree for people, interests, work; shared tree otherwise).
 Identify the 1-2 specific leaf files that likely contain the answer.
 
 ### 3. Load Data (Level 3)
-Load the identified leaf files (e.g., `/srv/sheep_brain/agent-shared/life/finance/investments.md`).
+Load the identified leaf files (e.g., `/srv/household/life/finance/investments.md`).
 Synthesize the answer for the user.
 
 ## Example Query
 **User**: "When was the last oil change for the CR-V?"
 
-1.  **Level 1**: Load `/srv/sheep_brain/agent-shared/life/_index.md`. Identify **Vehicles** domain.
+1.  **Level 1**: Load `/srv/household/life/_index.md`. Identify **Vehicles** domain.
 2.  **Level 2**: Load `life/vehicles/_index.md`. Identify `crv_2018.md` as the relevant file.
 3.  **Level 3**: Load `life/vehicles/crv_2018.md`.
 4.  **Answer**: "The last oil change was on 2026-04-15 at 45,200 miles."
