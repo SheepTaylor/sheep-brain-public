@@ -62,7 +62,7 @@ Moose develops as Linux user `moose`; only Sheep promotes. Plan: `knowledge/plan
 | Develop | `git -C ~/projects/moose-base worktree add ~/projects/scratch-<feature> -b moose/<feature> origin/master`; `direnv allow`; seed the DB: `mkdir -p ~/data/scratch-<feature> && cp /srv/household/seed-agent.db ~/data/scratch-<feature>/agent.db`; pytest | |
 | Hand over | `git push origin moose/<feature>` (the exchange only accepts `moose/*` branches) | |
 | Review + integrate | | `git fetch household`, review, then `git merge household/moose/<feature>` in the candidate worktree (staging); test |
-| Release | | `git merge staging --ff-only` in the live worktree, push GitHub and `household` |
+| Release | | `git merge staging --ff-only` in the live worktree, push GitHub and `household`, then `git -C /srv/household/agent-system-live pull --ff-only` (the read-only copy Moose's own agents run from; a default ACL keeps it group read-only) |
 
 - Never name a worktree `agent-system` or `agent-system-candidate`: `.envrc` derives the tier from the directory name.
 - `/srv/household/seed-agent.db` is rebuilt nightly from live (finance, health, food kept; Sheep's mail, calendar and agent conversations emptied).

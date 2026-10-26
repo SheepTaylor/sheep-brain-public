@@ -1,6 +1,6 @@
 # Moose's own account: Linux user, Claude Code, shared and private knowledge
 
-Status: approved by Sheep 2026-10-26; designed with Antigravity (one round); not started
+Status: approved by Sheep 2026-10-26; designed with Antigravity (one round); Phases 1–3 done 2026-10-26 (Phase 3 uses the local exchange repo `/srv/household/agent-system.git` instead of GitHub branch protection, which needs a paid plan); Phase 0 hardening and Phase 4 open
 
 ## Goal
 
