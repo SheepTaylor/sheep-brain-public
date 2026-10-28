@@ -1,6 +1,6 @@
 # Agent Core — self-correcting, self-learning redesign
 
-Status: direction and decisions approved 2026-10-18 (see Decisions); not built. No dollar figures or
+Status: Phases 0–4 LIVE (2026-10-18 to 2026-10-20); Calendar Step 1 LIVE (2026-10-25, `2026-10-25-calendar-plan.md`); KB change proposals LIVE (2026-10-23, `2026-10-23-kb-change-approval.md`). Pending cutover on 2026-11-02 (after 3-week shadow trial): retire `synthesis_agent` and `financial_agent`. Note: sections "Self-learning", "Autonomy tiers", and "Message budget" below are the original 2026-10-18 draft and are **superseded** where noted by "Revision 2026-10-20: Phases 3–5" at line 203. No dollar figures or
 personal details here: `knowledge/` is published. The monthly API cap lives in
 `~/.config/agent-system.env` as `AGENT_MONTHLY_CAP_USD`.
 

@@ -187,7 +187,7 @@ for interactive runs.
 | `notify_agent` | `OnFailure=telegram-alert@%n.service` on every unit; `restore-drill.service` | unit name (+ journal tail) or stdin | Telegram alert |
 
 ## Systemd Timers
-Live in `~/.config/systemd/user/`; tracked copies in `infra/`. Install with `cp infra/*.service infra/*.timer ~/.config/systemd/user/ && systemctl --user daemon-reload` (then `enable --now` any new unit).
+Tracked in `infra/` and symlinked into `~/.config/systemd/user/`. Install or link new units with `ln -sf ~/projects/agent-system/infra/*.service ~/projects/agent-system/infra/*.timer ~/.config/systemd/user/ && systemctl --user daemon-reload` (then `enable --now` any new unit).
 - `agent-financial.timer` — daily
 - `agent-synthesis.timer` — weekly
 - `agent-bills.timer` — daily 07:10, bill emails → verification, cash-flow projection, monthly bills report

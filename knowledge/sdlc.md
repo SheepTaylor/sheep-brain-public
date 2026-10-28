@@ -15,15 +15,12 @@ This document defines the development lifecycle for the agent system, focusing o
 The promotion flow ensures that code is tested in isolated and integration environments before reaching production.
 
 ### Step 1: Feature Development (Scratch)
-- Create a new branch: `git checkout -b scratch/my-feature`
-- Create a new worktree: `git worktree add ~/projects/scratch-my-feature -b scratch/my-feature`
-- Configure `.envrc`:
+- Create a new branch and worktree from `master`:
   ```bash
-  export AGENT_ENV=scratch
-  export AGENT_SCRATCH_NAME=my-feature
+  git -C ~/projects/agent-system worktree add ~/projects/scratch-my-feature -b scratch/my-feature master
   ```
-- Run `direnv allow`.
-- Develop and test locally.
+- Run `direnv allow ~/projects/scratch-my-feature` (`.envrc` automatically sets `AGENT_ENV=scratch` and `AGENT_SCRATCH_NAME=my-feature` from the directory name).
+- Develop and test locally (`python3 -m pytest tests/`).
 
 ### Step 2: Integration Testing (Candidate)
 - Merge scratch branch into `staging`:
@@ -34,17 +31,23 @@ The promotion flow ensures that code is tested in isolated and integration envir
 - Verify behavior in the candidate worktree. The candidate DB is refreshed nightly from live.
 - If fixes are needed, apply them in the scratch worktree and re-merge.
 
-### Step 3: Production Release (Live)
+### Step 3: Production Release (Live) & Cleanup
 - Merge `staging` into `master`:
   ```bash
   cd ~/projects/agent-system
   git merge staging --ff-only
   ```
 - Verify behavior in the live worktree.
-- Restart any relevant services (e.g., `systemctl --user restart agent-synthesis.timer`).
+- Reload or restart any relevant services (`systemctl --user daemon-reload`, e.g., `systemctl --user restart agent-telegram-bot.service`).
+- Remove the merged scratch worktree, branch, and scratch DB:
+  ```bash
+  git -C ~/projects/agent-system worktree remove ~/projects/scratch-my-feature
+  git -C ~/projects/agent-system branch -d scratch/my-feature
+  rm -rf ~/data/scratch-my-feature
+  ```
 
 ### Note on .envrc
-.envrc is committed to git but is environment-specific. When merging between branches (e.g., scratch → staging), you must resolve conflicts in .envrc by keeping the target branch's AGENT_ENV value.
+`.envrc` is identical across all branches and derives `AGENT_ENV` and `AGENT_SCRATCH_NAME` from `basename "$PWD"` (`agent-system` = `live`, `agent-system-candidate` = `candidate`, `scratch-*` = `scratch`). Merges between branches never require `.envrc` conflict resolution.
 
 ## 3. Database Management
 - All DB access MUST go through `shared.db.get_db()`.

@@ -1,7 +1,7 @@
 # System Architecture
 
 ## Host
-Dedicated home server / mini PC running Ubuntu 24.04. Always-on; remote access via Tailscale + SSH + tmux. No web dashboard — Telegram is the sole end-user interface.
+Dedicated home server / mini PC running Ubuntu 26.04 (upgraded from 24.04 on 2026-10-22). Always-on; remote access via Tailscale + SSH + tmux (`ufw` restricts inbound to `tailscale0`). No web dashboard — Telegram is the sole end-user interface.
 
 ## Layers
 

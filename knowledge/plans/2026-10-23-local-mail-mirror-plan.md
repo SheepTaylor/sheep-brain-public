@@ -67,7 +67,7 @@ Gmail ──IMAP, pull only──▶ mbsync (systemd timer, every 30 min)
 
 ### 3. Privacy and untrusted input
 
-- **Every message is local-only by default.** `domain` is set by deterministic sender rules,
+- **Every message is local-only by default.** `mail_messages` is in `agent_tools.LOCAL_TABLES` (refused by `query_db` and `db_schema`) and `seed.EMPTIED`. `domain` is set by deterministic sender rules,
   kept in the same TOML style as `tasks.toml` (`agent/mail_rules.toml`):
   - known finance senders (the bills list, Monarch, banks) → `finance`. These may use
     `ask_claude` per `tasks.toml`;

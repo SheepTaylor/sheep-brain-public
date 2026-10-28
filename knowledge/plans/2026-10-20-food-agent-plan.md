@@ -1,7 +1,7 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: approved 2026-10-20; Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 (a09a8c7); Phase 3 live 2026-10-21 (f409cd6); design agreed with Antigravity (2 rounds, see
-Review); not built. No personal details here: `knowledge/` is published. Recipes and the meal
+Status: LIVE (Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 a09a8c7, Phase 3 live 2026-10-21 f409cd6, Moose `eaten_by` migration 023 live 2026-10-26); design agreed with Antigravity (2 rounds, see
+Review). No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
 ## Goal

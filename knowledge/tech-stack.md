@@ -1,13 +1,13 @@
 # Tech Stack
 
 ## Languages
-- **Python 3.12+** — primary language for all agents, scripts, and shared modules
+- **Python 3.14** (`/usr/bin/python3` on Ubuntu 26.04) — primary language for all agents, scripts, and shared modules
 - **Bash** — install scripts and one-off admin tasks only
-- **Markdown** — life knowledge base (`~/agent-shared/life/`)
+- **Markdown** — life knowledge base (`/srv/household/life/` shared, `~/agent-shared/life/` private)
 
 ## Package Management
-- `pip` + `venv` — one venv per project worktree
-- No `uv`, no Poetry; keep it stdlib-standard
+- System Python (`/usr/bin/python3`) with stdlib-first dependencies (`anthropic`, `pytest`)
+- No `uv`, no Poetry, no per-worktree venv required; keep it stdlib-standard
 
 ## Database
 - **SQLite** via Python's `sqlite3` module (no ORM)

@@ -1,6 +1,6 @@
 # Moose's own account: Linux user, Claude Code, shared and private knowledge
 
-Status: approved by Sheep 2026-10-26; designed with Antigravity (one round); Phases 1–3 done 2026-10-26 (Phase 3 uses the local exchange repo `/srv/household/agent-system.git` instead of GitHub branch protection, which needs a paid plan); Phase 0 hardening and Phase 4 open
+Status: approved by Sheep 2026-10-26; designed with Antigravity (one round); Phases 1–3 done 2026-10-26 (Phase 3 uses the local exchange repo `/srv/household/agent-system.git` instead of GitHub branch protection, which needs a paid plan); Phase 0 hardening done except Sheep's SSH key (`PasswordAuthentication no` once `~sheep/.ssh/authorized_keys` is populated; Moose does not use SSH; `fail2ban` dropped); Phase 4 open
 
 ## Goal
 
@@ -32,8 +32,7 @@ She can build agents; Sheep approves every promotion to live.
 
 ## Phases
 
-0. **Hardening (sudo).** Run `~/scripts/security-remediation-2026-10-22.sh` (ufw on tailscale0,
-   SSH key-only after key login is verified); add fail2ban.
+0. **Hardening (sudo).** `~/scripts/security-remediation-2026-10-22.sh` ran 2026-10-22 (`ufw` active on `tailscale0`, `PermitRootLogin no`, Tailscale key expiry disabled). Remaining step: add Sheep's laptop public key to `~sheep/.ssh/authorized_keys`, verify key login, then append `PasswordAuthentication no` to `/etc/ssh/sshd_config.d/10-hardening.conf` (Moose does not log in over SSH; `fail2ban` dropped).
 1. **User and Claude Code.** `adduser moose` (no sudo), home 0700, `loginctl enable-linger moose`,
    group `household` (sheep, moose), her SSH key, her device on the tailnet. Node system-wide
    (Sheep's nvm is inside a 0700 home) or her own nvm; `claude` signed in with her own Anthropic
