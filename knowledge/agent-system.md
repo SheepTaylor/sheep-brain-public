@@ -96,6 +96,21 @@ questions are open gets a hint on how to answer.
   check, 1 revision, alerts of the last 2 days in the prompt so they aren't repeated); follow-up results and held
   messages are appended verbatim (held text can be local-only). Follow-ups are marked done and the outbox flushed only
   after the digest is delivered. The first run records a baseline. `--dry-run` changes nothing.
+- Leo (`shared/leo.py`, `agents/leo_agent.py`; plan `plans/2026-10-28-leo-chief-of-staff-plan.md`; Phase 0 since
+  2026-10-28): the heartbeat's gate now feeds Leo instead of a digest. 07:30 `leo_agent.py prepare` (in
+  `agent-heartbeat.service`) builds the day's pack in `agent_state` `leo:YYYY-MM-DD` (gate facts and plain lines,
+  due follow-ups run, risk watch) and sends nothing. "Leo" / `/leo` (morning, before 15:00): check-in buttons, then
+  the briefing (task `leo`, Sonnet, playbook sections Leo + Briefing, critic off, 1 revision, local time in the
+  prompt). 10:00 `agent-leo-deliver.timer`: the briefing with the check-in buttons on it, unless already delivered or
+  empty (empty → silent). State, follow-ups and outbox advance only on delivery; held messages go out apart as
+  `leo_held`, never through a model, and are kept out of `pack.context`. After 15:00 "Leo" opens the debrief
+  (playbook Debrief). For 45 min after Leo last spoke, Sheep's cloud-routed messages go to `leo.turn` (history from
+  `agent_runs` agent `leo`), otherwise to the conversation agent. Senders: `leo` (10:00 self-send, proactive),
+  `leo_reply` (anything Sheep asked for; excluded from the Quiet goal), `leo_held`; all unbudgeted.
+  Check-ins (migration 024 `checkins`): `ci:<m|e>:<e|m>:<1-5>` buttons; words only from a reply to the check-in
+  message or `/note`, stored raw, never in a prompt. Local-only (`LOCAL_TABLES`, seed `EMPTIED`); the cloud sees
+  `checkins.signal()` (today's scores, 7-day averages, trend). Memory kind `decision` records Sheep's calls.
+  `heartbeat_agent.py main` still works for rollback (point the unit's ExecStart back at it).
 - Message budget (`shared/telegram.py`): `MESSAGE_BUDGET` (default 4) budgeted messages a day; over it, a non-critical
   message goes to `agent_outbox` and arrives in the next digest. Unbudgeted: critical, `telegram_bot`, `feedback_ack`,
   `heartbeat_agent`, `send_one` question/proposal messages. Never held: `health_agent`, `synthesis_agent`,
@@ -180,7 +195,8 @@ Live in `~/.config/systemd/user/`; tracked copies in `infra/`. Install with `cp 
 - `agent-health-connect.timer` — daily 23:30, Health Connect export → `health_facts`
 - `agent-event-check.timer` — daily 08:15, due one-off event checks → web search → Telegram
 - `agent-review.timer` — weekly Mon 07:45, agent core weekly review (shadow trial)
-- `agent-heartbeat.timer` — daily 07:30, morning digest only when something changed; runs due agent follow-ups and the risk watch
+- `agent-heartbeat.timer` — daily 07:30, Leo prepares the morning pack (sends nothing); runs due agent follow-ups and the risk watch
+- `agent-leo-deliver.timer` — daily 10:00, Leo's briefing goes out by itself unless Sheep already said "Leo" (silent when empty)
 - `agent-reflection.timer` — daily 09:30 check; the reflection runs only when due (monthly, or after ≥3 👎 / ≥3 flagged runs)
 - `candidate-db-refresh.timer` — nightly live→candidate DB snapshot
 - `restore-drill.timer` — quarterly `~/scripts/restore-drill.sh` from the offsite mirror, result to Telegram
