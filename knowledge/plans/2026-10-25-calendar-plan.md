@@ -54,13 +54,10 @@ Action items that may wake the digest (all deterministic):
    assigned, else "time TBA".
 5. Chore or task due today or overdue (Phase 2).
 
-## Phase 2 (later): chores from maintenance.md and cleaning.md → Google Tasks
-- The Tasks API has no recurrence, so the system owns it: two lists it creates ("Home maintenance",
-  "Housekeeping"); each row due within 7 days becomes one task ("M01 Check HVAC air filter", due date).
-  A ticked task → chore_log row in SQLite → next occurrence from completed date + interval.
-- maintenance.md "Last performed" stays human-curated; due = max(chore_log, md). Daily CD* rows
-  excluded; weekly rows opt-in. Sheep clears his old Tasks himself; the system never deletes his tasks.
-- /todo add/list on his default list. Detailed design when the phase starts.
+## Phase 2: dropped 2026-10-28 (Sheep)
+Google Tasks is out. Chores from maintenance.md and cleaning.md reach Sheep through Leo's daily picks
+(`2026-10-28-leo-chief-of-staff-plan.md`): [Done] writes `chore_log`, due = max(chore_log, md),
+maintenance.md "Last performed" stays human-curated.
 
 ## Local look-ahead (adopted 2026-10-25, experimental)
 Gemma, Monday, appended as plain text after the review: next 14 days deduped + games + due chores +
