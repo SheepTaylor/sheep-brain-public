@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: LIVE (Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 a09a8c7, Phase 3 live 2026-10-21 f409cd6, Moose `eaten_by` migration 023 live 2026-10-26, Phase 4 `/suggest` on staging 2026-10-29 86fb784); design agreed with Antigravity (2 rounds, see
+Status: LIVE (Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 a09a8c7, Phase 3 live 2026-10-21 f409cd6, Moose `eaten_by` migration 023 live 2026-10-26, Phase 4 `/suggest` live 2026-10-29 86fb784); design agreed with Antigravity (2 rounds, see
 Review). No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -295,7 +295,7 @@ version bound `subprocess.run` as a default argument, so a bot test printed 4 re
 were cancelled). Fixed: `run` is now resolved per call, and tests stub recipe_print's subprocess. Antigravity's
 review added the double-tap guard.
 
-## Phase 4 results (2026-10-29, staging 86fb784)
+## Phase 4 results (2026-10-29, live 86fb784)
 
 `shared/suggest.py`, as designed above, with no model call. `/suggest` in both chats (Moose too: she already
 has the recipes and the meal log), a 💡 Suggest launcher button, and the `suggest_meals` agent tool.
