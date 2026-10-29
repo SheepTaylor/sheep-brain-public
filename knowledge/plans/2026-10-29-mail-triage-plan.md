@@ -1,7 +1,7 @@
 # Mail triage in Leo's morning briefing (mail mirror, phase 3)
 
 Status: AGREED with Antigravity 2026-10-29 (2 rounds, conversation 7ca1dc98-2b41-41d1-8e52-811ac8e5810c;
-transcripts in `2026-10-29-mail-triage-review/`). APPROVED by Sheep 2026-10-29. Step 0 built (agent-system eebb310, on staging); the triage itself is next.
+transcripts in `2026-10-29-mail-triage-review/`). APPROVED by Sheep 2026-10-29. Built on staging 2026-10-29: Step 0 (eebb310, dd1e7e7) and the triage in shadow mode (9e6c3fa); see Build results.
 Answers the first open decision of `2026-10-23-local-mail-mirror-plan.md` ("what to build on the
 mirror first"). No personal details here: `knowledge/` is published.
 
@@ -166,3 +166,20 @@ inside the 07:30 prepare (no deadline before the 10:00 self-send).
 
 Sending mail or drafting replies (agent core Phase 5, P10), changing Gmail, receipts, full-text
 search, and any proactive mail message outside the briefing.
+
+## Build results (2026-10-29, staging 9e6c3fa)
+
+- **Step 0 grew by one table:** `agent_runs` is local-only too. The bot traces every message it handles
+  (input and reply), including questions answered on the local model (31 plain-text rows on live).
+  Antigravity agreed (round 3). The `AGENT_ENV_FILE` override and the conftest guard from the dispatch
+  plan's Step 0 ship in the same commit.
+- **On the real mirror** (counts only, nothing read from this cloud session): 250 messages in 3 days, 231
+  bulk, 3 from Sheep, and 11 candidates after the filters, about 3–4 a day. Gemma took 16 s each; the
+  first run sorted 2 act, 5 fyi and 4 ignore.
+- **Bug caught on real mail:** a pending insert locked the DB while `ask_local` recorded its usage on
+  its own connection. `run()` now commits each item, and a regression test covers it.
+- **Deviations from the text above:**
+  1. `/mail` doesn't call the model. The bot is single-threaded and sorting takes ~16 s a message, so
+     `/mail` lists what the 07:30 run sorted and says how many newer ones are unsorted.
+  2. The shadow week is the `BRIEFING = False` constant in `shared/mail_triage.py`, flipped by a commit
+     after Sheep's go.
