@@ -1,6 +1,6 @@
 # Food Agent — recipes, meal log, recommendations
 
-Status: LIVE (Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 a09a8c7, Phase 3 live 2026-10-21 f409cd6, Moose `eaten_by` migration 023 live 2026-10-26); design agreed with Antigravity (2 rounds, see
+Status: LIVE (Phases 0–1 live 2026-10-20, Phase 2 live 2026-10-21 a09a8c7, Phase 3 live 2026-10-21 f409cd6, Moose `eaten_by` migration 023 live 2026-10-26, Phase 4 `/suggest` on staging 2026-10-29 86fb784); design agreed with Antigravity (2 rounds, see
 Review). No personal details here: `knowledge/` is published. Recipes and the meal
 log live in the agent DB, not in `life/` (agents never write to `life/`).
 
@@ -294,3 +294,14 @@ turned into a PDF by headless Chrome and sent to the CUPS printer (Brother HL-L2
 version bound `subprocess.run` as a default argument, so a bot test printed 4 real pages (2 more queued jobs
 were cancelled). Fixed: `run` is now resolved per call, and tests stub recipe_print's subprocess. Antigravity's
 review added the double-tap guard.
+
+## Phase 4 results (2026-10-29, staging 86fb784)
+
+`shared/suggest.py`, as designed above, with no model call. `/suggest` in both chats (Moose too: she already
+has the recipes and the meal log), a 💡 Suggest launcher button, and the `suggest_meals` agent tool.
+- **Ties** (all of a sparse log) are broken by a shuffle seeded with the date: the picks change daily but
+  not between two taps on the same day.
+- **`week`** searches the top 12 for the best-ranked order with no protein twice in a row; a greedy pick can
+  run out (chicken, fish, beef, chicken, then only chicken left). Protein = the first protein tag.
+- **Empty log:** when no pick has been made, the reasons ("never made yet" on every line) collapse into
+  the header. The meal log was empty at release, so the first suggestions draw only on saved recipes.
