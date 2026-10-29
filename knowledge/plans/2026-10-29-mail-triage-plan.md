@@ -1,7 +1,7 @@
 # Mail triage in Leo's morning briefing (mail mirror, phase 3)
 
 Status: AGREED with Antigravity 2026-10-29 (2 rounds, conversation 7ca1dc98-2b41-41d1-8e52-811ac8e5810c;
-transcripts in `2026-10-29-mail-triage-review/`). Awaiting Sheep's approval; nothing is built.
+transcripts in `2026-10-29-mail-triage-review/`). APPROVED by Sheep 2026-10-29. Step 0 built (agent-system eebb310, on staging); the triage itself is next.
 Answers the first open decision of `2026-10-23-local-mail-mirror-plan.md` ("what to build on the
 mirror first"). No personal details here: `knowledge/` is published.
 
