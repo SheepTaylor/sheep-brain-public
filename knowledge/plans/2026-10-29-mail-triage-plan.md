@@ -167,7 +167,7 @@ inside the 07:30 prepare (no deadline before the 10:00 self-send).
 Sending mail or drafting replies (agent core Phase 5, P10), changing Gmail, receipts, full-text
 search, and any proactive mail message outside the briefing.
 
-## Build results (2026-10-29, staging 9e6c3fa)
+## Build results (2026-10-29, staging 9e6c3fa + review fixes d6383a5; Antigravity code review APPROVE)
 
 - **Step 0 grew by one table:** `agent_runs` is local-only too. The bot traces every message it handles
   (input and reply), including questions answered on the local model (31 plain-text rows on live).
@@ -183,3 +183,7 @@ search, and any proactive mail message outside the briefing.
      `/mail` lists what the 07:30 run sorted and says how many newer ones are unsorted.
   2. The shadow week is the `BRIEFING = False` constant in `shared/mail_triage.py`, flipped by a commit
      after Sheep's go.
+  3. `listed` counts briefing deliveries only; looking at `/mail` doesn't count (code review: three looks
+     before 10:00 would have dropped items from the briefing).
+- **Code review fixes (d6383a5):** `due` must be a real calendar date, and a bare 👍/👎 replied to a
+  `leo_mail` message points to `/mail`'s buttons instead of becoming feedback.
