@@ -1,7 +1,7 @@
 # Leo Phase 3: dispatching Claude Code jobs
 
 Status: AGREED with Antigravity 2026-10-29 (2 rounds, conversation bdb6bdd2-dc98-40a3-8f3c-d798a8b1ee0c;
-transcripts in `2026-10-29-leo-dispatch-review/`). APPROVED by Sheep 2026-10-29. Step 0 built (agent-system eebb310, on staging). The build waits for Leo
+transcripts in `2026-10-29-leo-dispatch-review/`). APPROVED by Sheep 2026-10-29. Step 0 LIVE 2026-10-29 (agent-system eebb310, dd1e7e7). The build waits for Leo
 Phases 1 and 2 (Sheep keeps phase order), because Phase 3 uses Phase 2's dev board; Step 0 below
 ships before then. This is the "own design round" required by
 `2026-10-28-leo-chief-of-staff-plan.md`. No personal details here: `knowledge/` is published.
